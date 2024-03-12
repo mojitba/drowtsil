@@ -13,17 +13,6 @@ substitutions = {
 }
 
 
-def add_pattern(word, pattern_dict):
-    for i in pattern_dict.keys():
-        if i == 0:
-            word = pattern_dict.get(i) + word
-        elif i == 1000:
-            word = word + pattern_dict.get(i)
-        else:
-            word = word[:i] + pattern_dict.get(i) + word[i:]
-    return word
-
-
 def capitalize(input_list):
     return [item.capitalize() for item in input_list]
 

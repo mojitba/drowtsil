@@ -1,3 +1,6 @@
+""""Docstring about this script
+
+"""
 from timeit import default_timer
 import argparse
 from pathlib import Path
@@ -27,7 +30,18 @@ logo = """
 """
 
 
-def create_parser(process_number_default):
+def _add_pattern(word, pattern_dict):
+    for i in pattern_dict.keys():
+        if i == 0:
+            word = pattern_dict.get(i) + word
+        elif i == 1000:
+            word = word + pattern_dict.get(i)
+        else:
+            word = word[:i] + pattern_dict.get(i) + word[i:]
+    return word
+
+
+def _create_parser(process_number_default):
     parser = argparse.ArgumentParser(
         description="Another Wordlist Generator for Security Audit Purposes",
         prog="Drowtsil WordList Generator",
@@ -111,7 +125,7 @@ def create_parser(process_number_default):
         "-lo", "--lower", action="store_true", help="Enable upper case function"
     )
     parser.add_argument(
-        "-c", "--capital", action="store_true", help="Enable capital case function"
+        "-c", "--capital", action="store_true", help="Enable capitalize function"
     )
     parser.add_argument(
         "-sb",
@@ -144,14 +158,14 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
     for item in iter:
         word = "".join(item)
         if pattern_dict:
-            word = helpers.add_pattern(word, pattern_dict)
+            word = _add_pattern(word, pattern_dict)
 
         word_counter = _add_to_wordlist(wordlist, word, min, max, regexp, word_counter)
 
         if level == 2 and not capital:
             cap_word = "".join(helpers.capitalize(item))
             if pattern_dict:
-                cap_word = helpers.add_pattern(cap_word, pattern_dict)
+                cap_word = _add_pattern(cap_word, pattern_dict)
 
             word_counter = _add_to_wordlist(
                 wordlist, cap_word, min, max, regexp, word_counter
@@ -179,16 +193,16 @@ def level_zero(args, current_words):
     output_print = []
     if args.upper:
         words += helpers.upper_case(current_words)
-        output_print.append("uppercase")
+        output_print.append("upper case")
     if args.lower:
         words += helpers.lower_case(current_words)
-        output_print.append("lowercase")
+        output_print.append("lower case")
     if args.toggle:
         words += helpers.toggle_case(current_words, args.toggle)
-        output_print.append("togglecase")
+        output_print.append("toggle case")
     if args.swap:
         words += helpers.swap_case(current_words)
-        output_print.append("swapcase")
+        output_print.append("swap case")
     if args.capital:
         words += helpers.capitalize(current_words)
         output_print.append("capitalize")
@@ -237,32 +251,24 @@ def level_two(
     return word_counter
 
 
-def main(argv=None):
-    start_method = get_all_start_methods()
-    set_start_method(start_method[0])
-    start_time = default_timer()
-    process_number_default = cpu_count()
-    print(logo)
-
-    parser = create_parser(process_number_default)
-    args = parser.parse_args()
-
+# private function for unittesting purposes
+def _extract_user_input(args, parser, read_function):
     try:
         if args.filename and args.tmpfile:
             target_cons_dir = Path(args.filename)
             target_tmp_dir = Path(args.tmpfile)
-            cons_words = helpers.read_from_file(target_cons_dir)
-            tmp_words = helpers.read_from_file(target_tmp_dir)
+            cons_words = read_function(target_cons_dir)
+            tmp_words = read_function(target_tmp_dir)
 
         elif args.filename and args.tmpinp:
             target_cons_dir = Path(args.filename)
-            cons_words = helpers.read_from_file(target_cons_dir)
+            cons_words = read_function(target_cons_dir)
             tmp_words = args.tmpinp
 
         elif args.input and args.tmpfile:
             target_tmp_dir = Path(args.tmpfile)
             cons_words = args.input
-            tmp_words = helpers.read_from_file(target_tmp_dir)
+            tmp_words = read_function(target_tmp_dir)
 
         elif args.input and args.tmpinp:
             cons_words = args.input
@@ -277,34 +283,59 @@ def main(argv=None):
             1,
             message="[!] ERROR: Uncorrect specidfied path for input files. Try again!\n",
         )
+    return cons_words, tmp_words
 
-    output_dir = Path(args.output)
-    len_input = len(cons_words)
-    semaphore = Semaphore(1)
-    if tmp_words:
-        total = ((len_input + 2) - args.pernumber) * len(tmp_words)
-    else:
-        total = len_input
 
-    iteration_number = 0
-    word_counter = 0
-    write_function = helpers.write_to_file
-    pattern_dict = None
-
+# private function for unittesting purposes
+def _extract_pattern(args):
     if args.pattern:
         pattern_dict = dict()
         for p in range(int(len(args.pattern) / 2)):
             pindex = int(args.pattern.pop())
             pstr = args.pattern.pop()
             pattern_dict[pindex] = pstr
+    else:
+        pattern_dict = None
+    return pattern_dict
+
+
+# private function for unittesting purposes
+def _compute_total(tmp_words, len_input, pernumber):
+    if tmp_words:
+        total = ((len_input + 2) - pernumber) * len(tmp_words)
+    else:
+        total = len_input
+    return total
+
+
+def main(argv=None):
+    start_method = get_all_start_methods()
+    set_start_method(start_method[0])
+    start_time = default_timer()
+    process_number_default = cpu_count()
+    write_function = helpers.write_to_file
+    read_function = helpers.read_from_file
+    parser = _create_parser(process_number_default)
+    args = parser.parse_args()
+    cons_words, tmp_words = _extract_user_input(args, parser, read_function)
+    len_input = len(cons_words)
+    total = _compute_total(tmp_words, len_input, args.pernumber)
+    output_dir = Path(args.output)
+    semaphore = Semaphore(1)
+    iteration_number = 0
+    word_counter = 0
+    print_bar = helpers.printProgressBar
+    pattern_dict = _extract_pattern(args)
+    print(logo)
 
     # emptying previous output file
-    with open(output_dir, "w"):
+    mode = "w"
+    with open(output_dir, mode):
         pass
 
     try:
         if args.level != 0:
-            helpers.printProgressBar(iteration_number, total, length=50)
+            print_bar(iteration_number, total, length=50)
 
         for item in tmp_words:
             current_words = [item]
@@ -314,7 +345,7 @@ def main(argv=None):
             if args.level == 0:
                 words, output_print = level_zero(args, current_words)
                 write_function(words, semaphore, output_dir)
-                print(f"The opertations have be done:\n")
+                print(f"These opertations have been done:\n")
                 for item in output_print:
                     print(f"-{item}\n")
 
