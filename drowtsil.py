@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from timeit import default_timer
 import argparse
 from pathlib import Path
@@ -11,17 +10,24 @@ from multiprocessing import (
     set_start_method,
     Semaphore,
 )
+import re
 
 from modules import helpers
 
 
+logo = """
+    ____                     __       _ __
+   / __ \_________ _      __/ /______(_) /
+  / / / / ___/ __ \ | /| / / __/ ___/ / / 
+ / /_/ / /  / /_/ / |/ |/ / /_(__  ) / /  
+/_____/_/   \____/|__/|__/\__/____/_/_/   
+                                                                                                                                             
+ Wordlist Generator for Security Audit
+                 V.1
+"""
 
-def main(argv=None):
-    start_method = get_all_start_methods()
-    set_start_method(start_method[0])
-    start_time = default_timer()
-    process_number_default = cpu_count()
 
+def create_parser(process_number_default):
     parser = argparse.ArgumentParser(
         description="Another Wordlist Generator for Security Audit Purposes",
         prog="Drowtsil WordList Generator",
@@ -54,9 +60,30 @@ def main(argv=None):
         default="./output.txt",
         help="Path of generated wordlist",
     )
-
     parser.add_argument(
         "-p",
+        "--pattern",
+        type=str,
+        nargs="+",
+        default=None,
+        help='Pattern of words, Enter like "pattern" "index". Example: 0 for first and 1000 for end of word or other indexes',
+    )
+
+    parser.add_argument(
+        "-r", "--regex", type=str, default=None, help="Regex to match words"
+    )
+
+    parser.add_argument(
+        "-l",
+        "--level",
+        type=int,
+        default=2,
+        choices=[0, 1, 2],
+        help="Level of operation (0,1,2)",
+    )
+
+    parser.add_argument(
+        "-pn",
         "--pernumber",
         type=int,
         default=2,
@@ -66,7 +93,9 @@ def main(argv=None):
         "-ps",
         "--process",
         type=int,
-        default=process_number_default,
+        nargs="?",
+        const=process_number_default,
+        default=0,
         help="Number of processes in pool(default is number of logical cores - 1)",
     )
     parser.add_argument(
@@ -90,6 +119,7 @@ def main(argv=None):
         action="store_true",
         help="Enable substitution function, replce 'a' with '@', 's' with '$' and etc",
     )
+    # ?
     parser.add_argument(
         "-t",
         "--toggle",
@@ -97,27 +127,125 @@ def main(argv=None):
         default=0,
         const=1,
         nargs="?",
-        help="Enable toggle case function with position [default=0]",
+        help="Enable toggle case function with index [default=0]",
     )
     parser.add_argument(
         "-s", "--swap", action="store_true", help="Enable upper case function"
     )
     parser.add_argument(
-        "-l",
-        "--level",
-        type=int,
-        default=2,
-        choices=[0, 1, 2],
-        help="Level of operation (0,1,2)",
+        "-rv", "--reverse", action="store_true", help="Reverse every item from input"
     )
 
+    return parser
+
+
+def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_counter):
+    wordlist = []
+    for item in iter:
+        word = "".join(item)
+        if pattern_dict:
+            word = helpers.add_pattern(word, pattern_dict)
+
+        word_counter = _add_to_wordlist(wordlist, word, min, max, regexp, word_counter)
+
+        if level == 2 and not capital:
+            cap_word = "".join(helpers.capitalize(item))
+            if pattern_dict:
+                cap_word = helpers.add_pattern(cap_word, pattern_dict)
+
+            word_counter = _add_to_wordlist(
+                wordlist, cap_word, min, max, regexp, word_counter
+            )
+
+    return wordlist, word_counter
+
+
+def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
+    if len(word) >= min and len(word) <= max:
+        if regexp != None:
+            if re.match(regexp, word):
+                wordlist.append(word)
+                word_counter += 1
+
+        else:
+            wordlist.append(word)
+            word_counter += 1
+
+    return word_counter
+
+
+def level_zero(args, current_words):
+    words = []
+    output_print = []
+    if args.upper:
+        words += helpers.upper_case(current_words)
+        output_print.append("uppercase")
+    if args.lower:
+        words += helpers.lower_case(current_words)
+        output_print.append("lowercase")
+    if args.toggle:
+        words += helpers.toggle_case(current_words, args.toggle)
+        output_print.append("togglecase")
+    if args.swap:
+        words += helpers.swap_case(current_words)
+        output_print.append("swapcase")
+    if args.capital:
+        words += helpers.capitalize(current_words)
+        output_print.append("capitalize")
+    if args.substitution:
+        words += helpers.substitution(current_words)
+        output_print.append("substitution")
+    if args.reverse:
+        words += helpers.reverse(current_words)
+        output_print.append("reverse")
+    return set(words), output_print
+
+
+def level_two(
+    wordlist,
+    args,
+    output_dir,
+    word_counter,
+    semaphore,
+    write_function,
+):
+    write_function(wordlist, semaphore, output_dir)
+    temp_wordlist = []
+    if not args.substitution:
+        temp_wordlist += helpers.substitution(wordlist)
+        write_function(temp_wordlist, semaphore, output_dir)
+        word_counter += len(temp_wordlist)
+        temp_wordlist.clear()
+    if not args.upper:
+        temp_wordlist += set(helpers.upper_case(wordlist))
+        write_function(temp_wordlist, semaphore, output_dir)
+        word_counter += len(temp_wordlist)
+        temp_wordlist.clear()
+    if not args.capital:
+        temp_wordlist += set(helpers.capitalize(wordlist))
+        write_function(temp_wordlist, semaphore, output_dir)
+        word_counter += len(temp_wordlist)
+        temp_wordlist.clear()
+    if not args.toggle:
+        temp_wordlist += set(helpers.toggle_case(wordlist, index=args.toggle))
+        write_function(temp_wordlist, semaphore, output_dir)
+        word_counter += len(temp_wordlist)
+        temp_wordlist.clear()
+
+    wordlist.clear()
+
+    return word_counter
+
+
+def main(argv=None):
+    start_method = get_all_start_methods()
+    set_start_method(start_method[0])
+    start_time = default_timer()
+    process_number_default = cpu_count()
+    print(logo)
+
+    parser = create_parser(process_number_default)
     args = parser.parse_args()
-    # exfiltrate arguments
-    min = args.min
-    max = args.max
-    per_number = args.pernumber
-    output_dir = Path(args.output)
-    process_number = args.process
 
     try:
         if args.filename and args.tmpfile:
@@ -150,109 +278,110 @@ def main(argv=None):
             message="[!] ERROR: Uncorrect specidfied path for input files. Try again!\n",
         )
 
+    output_dir = Path(args.output)
     len_input = len(cons_words)
     semaphore = Semaphore(1)
     if tmp_words:
-        total = ((len_input + 2) - per_number) * len(tmp_words)
+        total = ((len_input + 2) - args.pernumber) * len(tmp_words)
     else:
         total = len_input
 
     iteration_number = 0
     word_counter = 0
+    write_function = helpers.write_to_file
+    pattern_dict = None
+
+    if args.pattern:
+        pattern_dict = dict()
+        for p in range(int(len(args.pattern) / 2)):
+            pindex = int(args.pattern.pop())
+            pstr = args.pattern.pop()
+            pattern_dict[pindex] = pstr
 
     # emptying previous output file
-    with open(output_dir, "w") as f:
+    with open(output_dir, "w"):
         pass
 
     try:
         if args.level != 0:
-            helpers.printProgressBar(0, total, length=50)
+            helpers.printProgressBar(iteration_number, total, length=50)
+
         for item in tmp_words:
             current_words = [item]
             current_words += cons_words
+
             # checking for levels
             if args.level == 0:
-                words = []
-                output_print = []
-                if args.upper:
-                    words += helpers.upper_case(current_words)
-                    output_print.append("uppercase")
-                if args.lower:
-                    words += helpers.lower_case(current_words)
-                    output_print.append("lowercase")
-                if args.toggle:
-                    words += helpers.toggle_case(current_words, args.toggle)
-                    output_print.append("togglecase")
-                if args.swap:
-                    words += helpers.swap_case(current_words)
-                    output_print.append("swapcase")
-                if args.capital:
-                    words += helpers.capitalize(current_words)
-                    output_print.append("capitalize")
-                if args.substitution:
-                    words += helpers.substitution(current_words)
-                    output_print.append("substitution")
+                words, output_print = level_zero(args, current_words)
+                write_function(words, semaphore, output_dir)
+                print(f"The opertations have be done:\n")
+                for item in output_print:
+                    print(f"-{item}\n")
 
-                helpers.write_to_file(words, semaphore, output_dir)
-
-            if args.level == 1 or args.level == 2:
-                starmap_iterable = [
-                    (current_words, i) for i in range(per_number, len_input + 2)
-                ]
-
-                with Pool(processes=process_number) as pool:
-                    for iter in pool.starmap(permutations, starmap_iterable):
-                        wordlist = []
-                        for item in iter:
-                            letter = "".join(item)
-                            if len(letter) >= min and len(letter) <= max:
-                                wordlist.append(letter)
-                                word_counter += 1
-                            if args.level == 2 and not args.capital:
-                                cap_letter = "".join(helpers.capitalize(item))
-                                if len(cap_letter) >= min and len(cap_letter) <= max:
-                                    wordlist.append(cap_letter)
-                                    word_counter += 1
+            else:
+                if not args.process:
+                    for i in range(args.pernumber, len_input + 2):
+                        iter = permutations(current_words, i)
+                        wordlist, word_counter = create_wordlist(
+                            iter,
+                            args.min,
+                            args.max,
+                            args.level,
+                            args.capital,
+                            args.regex,
+                            pattern_dict,
+                            word_counter,
+                        )
 
                         if args.level == 1:
-                            helpers.write_to_file(wordlist, semaphore, output_dir)
+                            write_function(wordlist, semaphore, output_dir)
+
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
                         if args.level == 2:
-                            helpers.write_to_file(wordlist, semaphore, output_dir)
-                            temp_wordlist = []
-                            if not args.substitution:
-                                temp_wordlist += helpers.substitution(wordlist)
-                                helpers.write_to_file(
-                                    temp_wordlist, semaphore, output_dir
-                                )
-                                word_counter += len(temp_wordlist)
-                                temp_wordlist.clear()
-                            if not args.upper:
-                                temp_wordlist += set(helpers.upper_case(wordlist))
-                                helpers.write_to_file(
-                                    temp_wordlist, semaphore, output_dir
-                                )
-                                word_counter += len(temp_wordlist)
-                                temp_wordlist.clear()
-                            if not args.capital:
-                                temp_wordlist += set(helpers.capitalize(wordlist))
-                                helpers.write_to_file(
-                                    temp_wordlist, semaphore, output_dir
-                                )
-                                word_counter += len(temp_wordlist)
-                                temp_wordlist.clear()
-                            if not args.toggle:
-                                temp_wordlist += set(
-                                    helpers.toggle_case(wordlist, position=args.toggle)
-                                )
-                                helpers.write_to_file(
-                                    temp_wordlist, semaphore, output_dir
-                                )
-                                word_counter += len(temp_wordlist)
-                                temp_wordlist.clear()
-                            wordlist.clear()
+                            word_counter = level_two(
+                                wordlist,
+                                args,
+                                output_dir,
+                                word_counter,
+                                semaphore,
+                                write_function,
+                            )
+                            iteration_number += 1
+                            helpers.printProgressBar(iteration_number, total, length=50)
+                else:
+                    starmap_iterable = [
+                        (current_words, i) for i in range(args.pernumber, len_input + 2)
+                    ]
 
+                    with Pool(processes=args.process) as pool:
+                        for iter in pool.starmap(permutations, starmap_iterable):
+                            wordlist, word_counter = create_wordlist(
+                                iter,
+                                args.min,
+                                args.max,
+                                args.level,
+                                args.capital,
+                                args.regex,
+                                pattern_dict,
+                                word_counter,
+                            )
+                            if args.level == 1:
+                                write_function(wordlist, semaphore, output_dir)
+
+                                iteration_number += 1
+                                helpers.printProgressBar(
+                                    iteration_number, total, length=50
+                                )
+                            if args.level == 2:
+                                word_counter = level_two(
+                                    wordlist,
+                                    args,
+                                    output_dir,
+                                    word_counter,
+                                    semaphore,
+                                    write_function,
+                                )
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
 
@@ -272,10 +401,6 @@ def main(argv=None):
         print(
             f"Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil"
         )
-    if args.level == 0:
-        print(f"These opertations done on input wordlist:\n")
-        for item in output_print:
-            print(f"-{item}\n")
 
 
 if __name__ == "__main__":
