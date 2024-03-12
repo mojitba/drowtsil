@@ -147,7 +147,16 @@ def _create_parser(process_number_default):
         "-s", "--swap", action="store_true", help="Enable upper case function"
     )
     parser.add_argument(
+        "-st", "--sentence", action="store_true", help="Enable sentence case function"
+    )
+    parser.add_argument(
         "-rv", "--reverse", action="store_true", help="Reverse every item from input"
+    )
+    parser.add_argument(
+        "-a",
+        "--alternating",
+        action="store_true",
+        help="transform text into form that alternates between lowercase and upper case",
     )
 
     return parser
@@ -212,6 +221,10 @@ def level_zero(args, current_words):
     if args.reverse:
         words += helpers.reverse(current_words)
         output_print.append("reverse")
+    if args.alternating:
+        words += helpers.alternating_case(current_words)
+        output_print.append("alternating")
+    return set(words), output_print
     return set(words), output_print
 
 
@@ -235,8 +248,8 @@ def level_two(
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.capital:
-        temp_wordlist += set(helpers.capitalize(wordlist))
+    if not args.sentence_case:
+        temp_wordlist += set(helpers.sentence_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()

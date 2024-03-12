@@ -13,6 +13,21 @@ substitutions = {
 }
 
 
+def alternating_case(input_list):
+    alternating_list = []
+    for item in input_list:
+        word = ""
+        for i, _ in enumerate(item):
+            if i % 2 == 0:
+                word += item[i].lower()
+            else:
+                word += item[i].upper()
+
+        alternating_list.append(word)
+
+    return alternating_list
+
+
 def capitalize(input_list):
     return [item.capitalize() for item in input_list]
 
@@ -41,6 +56,10 @@ def reverse(input_list):
 
 def swap_case(input_list):
     return [item.swapcase() for item in input_list]
+
+
+def sentence_case(input_list):
+    return capitalize(input_list)
 
 
 def substitution(input_list):
