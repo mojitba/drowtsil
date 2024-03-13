@@ -93,6 +93,7 @@ def _create_parser(process_number_default):
         prog="Drowtsil WordList Generator",
         epilog="Thanks for using %(prog)s!",
     )
+    #user's provided paths or words
     parser.add_argument(
         "-i", "--input", type=str, nargs="+", help="List of constant input words"
     )
@@ -112,13 +113,21 @@ def _create_parser(process_number_default):
         type=str,
         help="Path to temporary Wordlist file, every time each one selected\n\t and add to constant words list",
     )
-
     parser.add_argument(
         "-o",
         "--output",
         type=str,
         default="./output.txt",
         help="Path of generated wordlist",
+    )
+    #user's prefer options
+    parser.add_argument(
+        "-l",
+        "--level",
+        type=int,
+        default=2,
+        choices=[0, 1, 2],
+        help="Level of operation (0,1,2)",
     )
     parser.add_argument(
         "-p",
@@ -128,20 +137,9 @@ def _create_parser(process_number_default):
         default=None,
         help='Pattern of words, Enter like "pattern" "index". Example: 0 for first and 1000 for end of word or other indexes',
     )
-
     parser.add_argument(
         "-r", "--regex", type=str, default=None, help="Regex to match words"
     )
-
-    parser.add_argument(
-        "-l",
-        "--level",
-        type=int,
-        default=2,
-        choices=[0, 1, 2],
-        help="Level of operation (0,1,2)",
-    )
-
     parser.add_argument(
         "-pn",
         "--pernumber",
@@ -164,6 +162,7 @@ def _create_parser(process_number_default):
     parser.add_argument(
         "-min", type=int, default=8, help="Minimum lenght of preshared key"
     )
+    #operations options
     parser.add_argument(
         "-u", "--upper", action="store_true", help="Enable upper case function"
     )
@@ -179,7 +178,6 @@ def _create_parser(process_number_default):
         action="store_true",
         help="Enable leet case function, replce 'a' with '@', 's' with '$' and etc",
     )
-    # ?
     parser.add_argument(
         "-t",
         "--toggle",
@@ -241,7 +239,7 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
             word = _add_pattern(word, pattern_dict)
 
         word_counter = _add_to_wordlist(wordlist, word, min, max, regexp, word_counter)
-
+        #apply capitalize operation in level 2
         if level == 2 and not capital:
             cap_word = "".join(helpers.capitalize(item))
             if pattern_dict:
@@ -375,6 +373,7 @@ def level_two(
         temp_wordlist += helpers.leet_case(wordlist)
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
+        #clear temp wordlist to save memory
         temp_wordlist.clear()
     if not args.upper:
         temp_wordlist += set(helpers.upper_case(wordlist))
@@ -396,13 +395,13 @@ def level_two(
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-
+    #clear wordlist to save memory
     wordlist.clear()
 
     return word_counter
 
 
-# private function for unittesting purposes
+# private function for testing purposes
 def _extract_user_input(args, parser, read_function):
     """A private function that reads input words from files and returns apropriate message if files not found.
 
@@ -443,12 +442,12 @@ def _extract_user_input(args, parser, read_function):
     except FileNotFoundError:
         parser.exit(
             1,
-            message="[!] ERROR: Uncorrect specidfied path for input files. Try again!\n",
+            message="[!] ERROR: Incorrect specidfied path of input files. Try again!\n",
         )
     except PermissionError:
         parser.exit(
             1,
-            message="[!] ERROR: Permission denied to specidfied path for input files. Try again!\n",
+            message="[!] ERROR: Permission denied to specidfied path of input files. Try again!\n",
         )
     return cons_words, tmp_words
 
@@ -457,7 +456,7 @@ def _extract_user_input(args, parser, read_function):
 def _extract_pattern(args):
     """A private function that creates a dictionary of patterns which provided by the user.
 
-    :param args: arguments provided by the user
+    :param args: arguments provided by the user - example: ['pattern1', 'index1']
     :type args: <class '__main__.Namespace'>
     :returns: a dictionary of patterns {index: "pattern",}
     :rtype: dict
@@ -501,14 +500,20 @@ def main(args=None):
     :returns: None
     :rtype: None
     """
+    #specifies start method for multiprocessing mode
     start_method = get_all_start_methods()
     set_start_method(start_method[0])
-    start_time = default_timer()
+    #calculate logical cpu cores
     process_number_default = cpu_count()
+    #record progress time
+    start_time = default_timer()
+    #assign functions for testing purpose
     write_function = helpers.write_to_file
     read_function = helpers.read_from_file
+    #create argument parser
     parser = _create_parser(process_number_default)
     args = parser.parse_args()
+    #extract constant and temporary lists
     cons_words, tmp_words = _extract_user_input(args, parser, read_function)
     len_input = len(cons_words)
     total = _calculate_total(tmp_words, len_input, args.pernumber)
@@ -530,6 +535,7 @@ def main(args=None):
             print_bar(iteration_number, total, length=50)
 
         for item in tmp_words:
+            #each time initialize a list of words from constant list and one item from temporary list
             current_words = [item]
             current_words += cons_words
 
@@ -542,6 +548,7 @@ def main(args=None):
                     print(f"-{item}\n")
 
             else:
+                #calculate permutation without multiprocessing
                 if not args.process:
                     for i in range(args.pernumber, len_input + 2):
                         iter = permutations(current_words, i)
@@ -576,7 +583,7 @@ def main(args=None):
                     starmap_iterable = [
                         (current_words, i) for i in range(args.pernumber, len_input + 2)
                     ]
-
+                    #calculate permutation with multiprocessing
                     with Pool(processes=args.process) as pool:
                         for iter in pool.starmap(permutations, starmap_iterable):
                             wordlist, word_counter = create_wordlist(
