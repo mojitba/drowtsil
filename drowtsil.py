@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 """This script allows the user to create wordlist for targeted subject. Use only for educational or security audit purposes.
 
-This tool accepts two list in form of text file (.txt) or from command line and returns a wordlist text file.
+This tool accepts two list in form of text file (.txt) or from command line and returns a wordlist in (.txt) format.
 
 Program:
     Drowtsil(reverse of word list)-v1.0 - Another wordlist for education or security audit purposes
@@ -45,7 +44,7 @@ from multiprocessing import (
     Semaphore,
 )
 
-from modules import helpers
+from src.modules import helpers
 
 logo = """
     ____                     __       _ __
@@ -167,7 +166,7 @@ def _create_parser(process_number_default):
         "-u", "--upper", action="store_true", help="Enable upper case function"
     )
     parser.add_argument(
-        "-lo", "--lower", action="store_true", help="Enable upper case function"
+        "-lo", "--lower", action="store_true", help="Enable lower case function"
     )
     parser.add_argument(
         "-c", "--capital", action="store_true", help="Enable capitalize function"
@@ -188,19 +187,22 @@ def _create_parser(process_number_default):
         help="Enable toggle case function with index [default=0]",
     )
     parser.add_argument(
-        "-s", "--swap", action="store_true", help="Enable upper case function"
+        "-s", "--swap", action="store_true", help="Enable swap case function"
     )
     parser.add_argument(
         "-st", "--sentence", action="store_true", help="Enable sentence case function"
     )
     parser.add_argument(
-        "-rv", "--reverse", action="store_true", help="Reverse every item from input"
+        "-rv", "--reverse", action="store_true", help="Reverse every word in level 0"
     )
     parser.add_argument(
         "-a",
         "--alternating",
         action="store_true",
         help="transform text into form that alternates between lowercase and upper case",
+    )
+    parser.add_argument(
+        "-all", action="store_true", help="Apply all text transform functions in level 0"
     )
 
     return parser
@@ -306,28 +308,28 @@ def level_zero(args, current_words):
     """
     words = []
     output_print = []
-    if args.upper:
+    if args.all or args.upper:
         words += helpers.upper_case(current_words)
         output_print.append("upper case")
-    if args.lower:
+    if args.all or args.lower:
         words += helpers.lower_case(current_words)
         output_print.append("lower case")
-    if args.toggle is not None:
+    if args.all or args.toggle is not None:
         words += helpers.toggle_case(current_words, args.toggle)
         output_print.append("toggle case")
-    if args.swap:
+    if args.all or args.swap:
         words += helpers.swap_case(current_words)
         output_print.append("swap case")
-    if args.capital:
+    if args.all or args.capital:
         words += helpers.capitalize(current_words)
         output_print.append("capitalize")
-    if args.leet_case:
+    if args.all or args.leet_case:
         words += helpers.leet_case(current_words)
         output_print.append("leet_case")
-    if args.reverse:
+    if args.all or args.reverse:
         words += helpers.reverse(current_words)
         output_print.append("reverse")
-    if args.alternating:
+    if args.all or args.alternating:
         words += helpers.alternating_case(current_words)
         output_print.append("alternating")
     return set(words), output_print
@@ -491,6 +493,25 @@ def _calculate_total(tmp_words, len_input, pernumber):
         total = len_input
     return total
 
+# private function for unittesting purposes
+def _checking_permutation_number(len_input, parser):
+    """A private function that calculates number of permutation for input words, to notify the user of the high volume of computation
+
+    :param len_input: length of constant word list
+    :type len_input: int
+    :param parser: an instance of argparse.ArgumentParser
+    :type parser: <class 'argparse.ArgumentParser'>
+    :returns: None
+    :rtype: None
+    """
+    import math
+    possible_permutation = math.factorial(len_input)
+    answer = input(f"Your input file contains {len_input} words with {possible_permutation} permutations. this numbers of permutation needs huge amount of computation, memory and disk resources.\n recommended try again with fewer words. Are you sure to continue? (-y for YES -n for NO - default is NO) ")
+    if answer == "-n" or answer == "":
+        parser.exit(
+        1,
+        message="[!] Try again with fewer words!\n",
+    )
 
 def main(args=None):
     """Main function to generated wordlist
@@ -529,7 +550,7 @@ def main(args=None):
     mode = "w"
     with open(output_dir, mode):
         pass
-
+    
     try:
         if args.level != 0:
             print_bar(iteration_number, total, length=50)
@@ -548,6 +569,9 @@ def main(args=None):
                     print(f"-{item}\n")
 
             else:
+                # checking for high number of permutations
+               if len_input >= 12:
+                _checking_permutation_number(len_input, parser)
                 #calculate permutation without multiprocessing
                 if not args.process:
                     for i in range(args.pernumber, len_input + 2):
