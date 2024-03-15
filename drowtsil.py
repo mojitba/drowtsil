@@ -506,7 +506,7 @@ def _checking_permutation_number(len_input, parser):
     """
     import math
     possible_permutation = math.factorial(len_input)
-    answer = input(f"Your input file contains {len_input} words with {possible_permutation} permutations. this numbers of permutation needs huge amount of computation, memory and disk resources.\n recommended try again with fewer words. Are you sure to continue? (-y for YES -n for NO - default is NO) ")
+    answer = input(f"Your input file contains {len_input} words with {possible_permutation} permutations. this number of permutation needs huge amount of computation, memory and disk resources.\n recommended try again with fewer words. Are you sure to continue? (-y for YES -n for NO - default is NO) ")
     if answer == "-n" or answer == "":
         parser.exit(
         1,
