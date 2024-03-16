@@ -251,21 +251,21 @@ def printProgressBar(
 ):
     """Call in a loop to create terminal progress bar.
 
-    :param iteration: current iteration - Required
+    :param iteration: current iteration (Required)
     :type iteration: int
-    :param total: total iterations - Required
+    :param total: total iterations (Required)
     :type total: int
-    :param prefix: prefix string - Optional
+    :param prefix: prefix string (Optional)
     :type prefix: str
-    :param suffix: suffix string - Optional
+    :param suffix: suffix string (Optional)
     :type suffix: str
-    :param decimals: positive number of decimals in percent complete - Optional
+    :param decimals: positive number of decimals in percent complete (Optional)
     :type decimals: int
-    :param length: character length of bar - Optional
+    :param length: character length of bar (Optional)
     :type length: int
-    :param fill: bar fill character - Optional
+    :param fill: bar fill character (Optional)
     :type fill: str
-    :param printEnd: end character (e.g. "\r", "\r\n") - Optional
+    :param printEnd: end character (e.g. "\r", "\r\n") (Optional)
     :type printEnd: str
     :returns: None
     :rtype: str

@@ -65,7 +65,7 @@ class DrowtsilTestCase(unittest.TestCase):
             "moRtyriCk42",
         ]
 
-    def test_create_wordlist(self):
+    def test_create_wordlist_with_pattern(self):
         iter = [
             ("riCk", "moRty"),
             ("moRty", "riCk"),
@@ -115,6 +115,35 @@ class DrowtsilTestCase(unittest.TestCase):
             self.word_counter,
         )
 
+        self.assertCountEqual(wordlist_with_pattern, excpected_list_with_pattern)
+        self.assertEqual(word_counter_with_pattern, 8)
+
+    def test_create_wordlist_without_pattern(self):
+        iter = [
+            ("riCk", "moRty"),
+            ("moRty", "riCk"),
+            ("42", "riCk", "moRty"),
+            ("42", "moRty", "riCk"),
+            ("riCk", "42", "moRty"),
+            ("riCk", "moRty", "42"),
+            ("moRty", "42", "riCk"),
+            ("moRty", "riCk", "42"),
+        ]
+
+        args = Namespace(
+            max=63,
+            min=8,
+            upper=False,
+            lower=False,
+            capital=True,
+            leet_case=False,
+            toggle=0,
+            swap=False,
+            regex=None,
+            level=1,
+            all=False,
+        )
+
         (
             wordlist_without_pattern,
             word_counter_without_pattern,
@@ -131,9 +160,6 @@ class DrowtsilTestCase(unittest.TestCase):
 
         self.assertCountEqual(wordlist_without_pattern, self.expected_words)
         self.assertEqual(word_counter_without_pattern, 8)
-
-        self.assertCountEqual(wordlist_with_pattern, excpected_list_with_pattern)
-        self.assertEqual(word_counter_with_pattern, 8)
 
     def test_level_zero(self):
         args = Namespace(
@@ -188,7 +214,7 @@ class DrowtsilTestCase(unittest.TestCase):
             ],
         )
 
-    def test_level_two(self):
+    def test_level_two_args_all_disabled(self):
         args_all_disabled = Namespace(
             input=self.const_words,
             tmpinp=self.tmp_words,
@@ -210,6 +236,19 @@ class DrowtsilTestCase(unittest.TestCase):
             level=2,
             all=False,
         )
+                
+        with patch("builtins.open", mock_open()) as mock_write_to_file:
+            word_counter = drowtsil.level_two(
+                self.expected_words,
+                args_all_disabled,
+                self.fake_output_path,
+                self.word_counter,
+                self.semaphore,
+                mock_write_to_file,
+            )
+            self.assertEqual(word_counter, 0)
+
+    def test_level_two_args_all_enabled(self):
         args_all_enabled = Namespace(
             input=self.const_words,
             tmpinp=self.tmp_words,
@@ -231,6 +270,7 @@ class DrowtsilTestCase(unittest.TestCase):
             level=2,
             all=False,
         )
+
         with patch("builtins.open", mock_open()) as mock_write_to_file:
             word_counter = drowtsil.level_two(
                 self.expected_words,
@@ -242,22 +282,10 @@ class DrowtsilTestCase(unittest.TestCase):
             )
             self.assertEqual(word_counter, 64)
 
-        with patch("builtins.open", mock_open()) as mock_write_to_file:
-            word_counter = drowtsil.level_two(
-                self.expected_words,
-                args_all_disabled,
-                self.fake_output_path,
-                self.word_counter,
-                self.semaphore,
-                mock_write_to_file,
-            )
-            self.assertEqual(word_counter, 0)
-
-    def test_add_to_wordlist(self):
+    def test_add_to_wordlist_args_without_regex(self):
         test_wordlist = []
         word_counter = 0
         args_without_regex = Namespace(max=63, min=8, regex=None)
-        args_with_regex = Namespace(max=63, min=8, regex="^[r]")
 
         for word in self.expected_words:
             word_counter = drowtsil._add_to_wordlist(
@@ -271,7 +299,11 @@ class DrowtsilTestCase(unittest.TestCase):
 
         self.assertEqual(word_counter, 8)
 
+    def test_add_to_wordlist_args_with_regex(self):
+        test_wordlist = []
         word_counter = 0
+        args_with_regex = Namespace(max=63, min=8, regex="^[r]")
+
         for word in self.expected_words:
             word_counter = drowtsil._add_to_wordlist(
                 test_wordlist,
@@ -342,88 +374,23 @@ class DrowtsilTestCase(unittest.TestCase):
 
     def test_extract_pattern(self):
         args = Namespace(pattern=["FIRST", "0", "END", "1000"])
-        re = drowtsil._extract_pattern(args)
-        self.assertEqual(re, {1000: "END", 0: "FIRST"})
+        result = drowtsil._extract_pattern(args)
+        self.assertEqual(result, {1000: "END", 0: "FIRST"})
 
-    def test_extract_user_input(self):
-        args_filename_tmpfile_exist = Namespace(
+    def test_extract_user_input_single_arg_exist(self):
+        single_arg_exist = Namespace(
             input=None,
             tmpinp=None,
             filename=self.fake_input_const_files,
-            tmpfile=self.fake_input_tmp_files,
-        )
-        args_filename_tmpin_exist = Namespace(
-            input=None,
-            tmpinp=self.tmp_words,
-            filename=self.fake_input_const_files,
             tmpfile=None,
         )
-        args_input_tmpfile_exist = Namespace(
-            input=self.const_words,
-            tmpinp=None,
-            filename=None,
-            tmpfile=self.fake_input_tmp_files,
-        )
-        args_input_tmpinp_exist = Namespace(
-            input=self.const_words,
-            tmpinp=self.tmp_words,
-            filename=None,
-            tmpfile=None,
-        )
-        args_does_not_exist = Namespace(
-            input=None,
-            tmpinp=None,
-            filename=None,
-            tmpfile=None,
-        )
-
-        args = [
-            args_filename_tmpfile_exist,
-            args_filename_tmpin_exist,
-            args_input_tmpfile_exist,
-            args_input_tmpinp_exist,
-            args_does_not_exist,
-        ]
-
+      
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
             mock_read_from_filename_tmpfile.return_value = ["mock value"]
-
-            self.assertEqual(
-                drowtsil._extract_user_input(
-                    args[0],
-                    self.parser,
-                    mock_read_from_filename_tmpfile,
-                ),
-                (["mock value"], ["mock value"]),
-            )
-            self.assertEqual(
-                drowtsil._extract_user_input(
-                    args[1],
-                    self.parser,
-                    mock_read_from_filename_tmpfile,
-                ),
-                (["mock value"], ["42"]),
-            )
-            self.assertEqual(
-                drowtsil._extract_user_input(
-                    args[2],
-                    self.parser,
-                    mock_read_from_filename_tmpfile,
-                ),
-                (["riCk", "moRty"], ["mock value"]),
-            )
-            self.assertEqual(
-                drowtsil._extract_user_input(
-                    args[3],
-                    self.parser,
-                    mock_read_from_filename_tmpfile,
-                ),
-                (["riCk", "moRty"], ["42"]),
-            )
-
+            
             with self.assertRaises(SystemExit) as e:
                 drowtsil._extract_user_input(
-                    args[4],
+                    single_arg_exist,
                     self.parser,
                     mock_read_from_filename_tmpfile,
                 )
@@ -434,10 +401,113 @@ class DrowtsilTestCase(unittest.TestCase):
                     "[!] ERROR: Input words doesn't provide or the specified directory doesn't exist.\n",
                 )
 
-    def test_checking_permutation_number(self):
+    def test_extract_user_input_args_filename_tmpfile_exist(self):
+        args_filename_tmpfile_exist = Namespace(
+            input=None,
+            tmpinp=None,
+            filename=self.fake_input_const_files,
+            tmpfile=self.fake_input_tmp_files,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            self.assertEqual(
+                drowtsil._extract_user_input(
+                    args_filename_tmpfile_exist,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                ),
+                (["mock value"], ["mock value"]),
+            )
+
+    def test_extract_user_input_args_filename_tmpin_exist(self):
+        args_filename_tmpin_exist = Namespace(
+            input=None,
+            tmpinp=self.tmp_words,
+            filename=self.fake_input_const_files,
+            tmpfile=None,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            self.assertEqual(
+                drowtsil._extract_user_input(
+                    args_filename_tmpin_exist,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                ),
+                (["mock value"], ["42"]),
+            )
+
+    def test_extract_user_input_args_input_tmpfile_exist(self):
+        args_input_tmpfile_exist = Namespace(
+            input=self.const_words,
+            tmpinp=None,
+            filename=None,
+            tmpfile=self.fake_input_tmp_files,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            self.assertEqual(
+                drowtsil._extract_user_input(
+                    args_input_tmpfile_exist,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                ),
+                (["riCk", "moRty"], ["mock value"]),
+            )
+
+    def test_extract_user_input_args_input_tmpinp_exist(self):
+        args_input_tmpinp_exist = Namespace(
+            input=self.const_words,
+            tmpinp=self.tmp_words,
+            filename=None,
+            tmpfile=None,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            self.assertEqual(
+                drowtsil._extract_user_input(
+                    args_input_tmpinp_exist,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                ),
+                (["riCk", "moRty"], ["42"]),
+            )
+
+    def test_extract_user_input_args_does_not_exist(self):
+        args_does_not_exist = Namespace(
+            input=None,
+            tmpinp=None,
+            filename=None,
+            tmpfile=None,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            with self.assertRaises(SystemExit) as e:
+                drowtsil._extract_user_input(
+                    args_does_not_exist,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                )
+                er = e.exception
+                self.assertEqual(er.error_code, 1)
+                self.assertEqual(
+                    er.message,
+                    "[!] ERROR: Input words doesn't provide or the specified directory doesn't exist.\n",
+                )
+
+    def test_checking_permutation_number_answer_no(self):
         len_input = 13
         with patch("builtins.input", lambda _ : '-n') as mock_input_no:
-            # mock_input_no.return_value = "-n"
 
             with self.assertRaises(SystemExit) as e:
                 drowtsil._checking_permutation_number(
@@ -451,7 +521,9 @@ class DrowtsilTestCase(unittest.TestCase):
                      er.message,
                      "[!] Try again with fewer words!",
                  )
-                 
+
+    def test_checking_permutation_number_answer_yes(self):
+        len_input = 13
         with patch("builtins.input", lambda _ : '-y') as mock_input_yes:
             result = drowtsil._checking_permutation_number(
                     len_input,
