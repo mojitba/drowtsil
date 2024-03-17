@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>helpers API documentation</title>
+<meta name="description" content="Helpers module contains functions that used to transform words and write generated wordlist to file …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>helpers</code></h1>
+</header>
+<section id="section-intro">
+<p>Helpers module contains functions that used to transform words and write generated wordlist to file</p>
+<h2 id="program">Program</h2>
+<p>Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.</p>
+<h2 id="usage">Usage</h2>
+<p>python drowtsil.py -h</p>
+<h2 id="author">Author</h2>
+<p>Mojtaba Hemmati
+github.com/mojitba 3/13/2024</p>
+<p>License:
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+02111-1307
+USA</p>
+<p>See 'LICENSE' for more information.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+&#34;&#34;&#34;Helpers module contains functions that used to transform words and write generated wordlist to file
+
+Program:
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
+
+Usage:
+    python drowtsil.py -h
+
+Author:
+    Mojtaba Hemmati
+    github.com/mojitba 3/13/2024
+
+License:
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+See &#39;LICENSE&#39; for more information.
+
+&#34;&#34;&#34;
+substitutions = {
+    &#34;a&#34;: &#34;@&#34;,
+    &#34;s&#34;: &#34;$&#34;,
+    &#34;i&#34;: &#34;1&#34;,
+    &#34;o&#34;: &#34;0&#34;,
+    &#34;t&#34;: &#34;7&#34;,
+    &#34;g&#34;: &#34;9&#34;,
+    &#34;e&#34;: &#34;3&#34;,
+    &#34;z&#34;: &#34;2&#34;,
+}
+
+
+def alternating_case(input_list):
+    &#34;&#34;&#34;Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of alternating version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    alternating_list = []
+    for item in input_list:
+        word = &#34;&#34;
+        for i, _ in enumerate(item):
+            if i % 2 == 0:
+                word += item[i].lower()
+            else:
+                word += item[i].upper()
+
+        alternating_list.append(word)
+
+    return alternating_list
+
+
+def capitalize(input_list):
+    &#34;&#34;&#34;Capitalize case of every item from input list.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of capitalized version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.capitalize() for item in input_list]
+
+
+def _check_input(input_item):
+    &#34;&#34;&#34;cheks if input is a string litteraly or an integer as a string.
+
+    :param input_item: input item
+    :type input_item: str
+    :returns: True if input is a string and False if not.
+    :rtype: bool
+    &#34;&#34;&#34;
+    try:
+        if type(int(input_item)) == int:
+            return False
+    except:
+        return True
+
+
+def lower_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input list to lower case.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of lower case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.lower() for item in input_list]
+
+
+def read_from_file(file_path):
+    &#34;&#34;&#34;Reading wordlist provided by the user from file line by line.
+
+    :param file_path: location of input file
+    :type file_path: list
+    :returns: None
+    :rtype: None
+    &#34;&#34;&#34;
+    with open(file_path, &#34;r&#34;) as f:
+        inputs = f.read().splitlines()
+    return inputs
+
+
+def reverse(input_list):
+    &#34;&#34;&#34;Reverse every item from input.
+
+    :param input_word: list provided by the user
+    :type input_word: str
+    :returns: reverse version of input word
+    :rtype: str
+    &#34;&#34;&#34;
+    return [item[::-1] for item in input_list]
+
+
+def swap_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input list to swap case (upper to lower and vice versa).
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of swap case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.swapcase() for item in input_list]
+
+
+def sentence_case(input_list):
+    &#34;&#34;&#34;Transform every item from input list to sentence case.
+    
+    It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
+    example: [&#34;thisistext&#34;, &#34;tHisIsALSOateXt&#34;] Transforms to [&#39;Thisistext&#39;, &#39;Thisisalsoatext&#39;]
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of input items in sentence case version
+    :rtype: list
+    &#34;&#34;&#34;
+    sentence_list = []
+    for item in input_list:
+        sentence_word = item[:1].capitalize()
+        sentence_word += item[1:].lower()
+        sentence_list.append(sentence_word)
+
+    return sentence_list
+
+
+def leet_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input list to leet case(1337). 
+    
+    It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+    example: [&#34;riCk&#34;, &#34;moRty&#34;, &#34;42&#34;] Transforms to [&#34;r1Ck&#34;, &#34;m0Rty&#34;, &#34;moR7y&#34;, &#34;m0R7y&#34;]
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a set of leet version of input items
+    :rtype: set
+    &#34;&#34;&#34;
+    new_list = []
+    for word in input_list:
+        if _check_input(word):
+            word_copy = word
+            for char in substitutions:
+                # find returns -1 if not found
+                index = word.find(char)
+                if index != -1:
+                    word = word.replace(char, substitutions.get(char))
+                    new_word = word_copy.replace(char, substitutions.get(char))
+                    new_list.append(new_word)
+            new_list.append(word)
+    return set(new_list)
+
+
+def toggle_case(input_list, index):
+    &#34;&#34;&#34;Transforms every item from input to toggle case with specified index. 
+    
+    in toggle case each word begins in lower case and the rest in upper case. 
+    example: toggle_case(input_list = [&#34;rick&#34;], index=0) returns [&#34;rICK&#34;]
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :param index: index of string which Transforms to lower case
+    :type index: int
+    :returns: a list of toggle case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    output_list = []
+    for item in input_list:
+        if _check_input(item):
+            tmpstr = &#34;&#34;
+            try:
+                tmpstr += item[:index].upper()
+                tmpstr += item[index].lower()
+                tmpstr += item[index + 1 :].upper()
+
+                output_list.append(tmpstr)
+            except:
+                pass
+    return output_list
+
+
+def upper_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input to upper case.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of upper case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.upper() for item in input_list]
+
+
+def write_to_file(wordlist, semaphore, file_path):
+    &#34;&#34;&#34;Write generated wordlist to file.
+
+    :param wordlist: wordlist to write on disk
+    :type wordlist: list
+    :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
+    :type semaphore: multiprocessing.synchronize.Semaphore
+    :param file_path: location of output file
+    :type file_path: str
+    :returns: None
+    :rtype: None
+    &#34;&#34;&#34;
+    with semaphore:
+        with open(file_path, &#34;a&#34;) as file:
+            for line in wordlist:
+                file.write(f&#34;{line}\n&#34;)
+
+
+# Source: https://stackoverflow.com/questions/3173320/text-progress-bar-in-terminal-with-block-characters
+def printProgressBar(
+    iteration,
+    total,
+    prefix=&#34;Progress:&#34;,
+    suffix=&#34;Completed&#34;,
+    decimals=1,
+    length=100,
+    fill=&#34;█&#34;,
+    printEnd=&#34;\r&#34;,
+):
+    &#34;&#34;&#34;Call in a loop to create terminal progress bar.
+    :param iteration: current iteration (Required)
+    :type iteration: int
+    :param total: total iterations (Required)
+    :type total: int
+    :param prefix: prefix string (Optional)
+    :type prefix: str
+    :param suffix: suffix string (Optional)
+    :type suffix: str
+    :param decimals: positive number of decimals in percent complete (Optional)
+    :type decimals: int
+    :param length: character length of bar (Optional)
+    :type length: int
+    :param fill: bar fill character (Optional)
+    :type fill: str
+    :param printEnd: end character (e.g. &#39;\r&#39;, &#39;\r\n&#39;) (Optional)
+    :type printEnd: str
+    :returns: None
+    :rtype: str
+    &#34;&#34;&#34;
+    percent = (&#34;{0:.&#34; + str(decimals) + &#34;f}&#34;).format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + &#34;-&#34; * (length - filledLength)
+    print(f&#34;\r{prefix} | {bar} | {percent}% {suffix}&#34;, end=printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="helpers.alternating_case"><code class="name flex">
+<span>def <span class="ident">alternating_case</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a list of alternating version of input items
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def alternating_case(input_list):
+    &#34;&#34;&#34;Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of alternating version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    alternating_list = []
+    for item in input_list:
+        word = &#34;&#34;
+        for i, _ in enumerate(item):
+            if i % 2 == 0:
+                word += item[i].lower()
+            else:
+                word += item[i].upper()
+
+        alternating_list.append(word)
+
+    return alternating_list</code></pre>
+</details>
+</dd>
+<dt id="helpers.capitalize"><code class="name flex">
+<span>def <span class="ident">capitalize</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Capitalize case of every item from input list.</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a list of capitalized version of input items
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def capitalize(input_list):
+    &#34;&#34;&#34;Capitalize case of every item from input list.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of capitalized version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.capitalize() for item in input_list]</code></pre>
+</details>
+</dd>
+<dt id="helpers.leet_case"><code class="name flex">
+<span>def <span class="ident">leet_case</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transforms every item from input list to leet case(1337). </p>
+<p>It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y"]</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a set of leet version of input items
+:rtype: set</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def leet_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input list to leet case(1337). 
+    
+    It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+    example: [&#34;riCk&#34;, &#34;moRty&#34;, &#34;42&#34;] Transforms to [&#34;r1Ck&#34;, &#34;m0Rty&#34;, &#34;moR7y&#34;, &#34;m0R7y&#34;]
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a set of leet version of input items
+    :rtype: set
+    &#34;&#34;&#34;
+    new_list = []
+    for word in input_list:
+        if _check_input(word):
+            word_copy = word
+            for char in substitutions:
+                # find returns -1 if not found
+                index = word.find(char)
+                if index != -1:
+                    word = word.replace(char, substitutions.get(char))
+                    new_word = word_copy.replace(char, substitutions.get(char))
+                    new_list.append(new_word)
+            new_list.append(word)
+    return set(new_list)</code></pre>
+</details>
+</dd>
+<dt id="helpers.lower_case"><code class="name flex">
+<span>def <span class="ident">lower_case</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transforms every item from input list to lower case.</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a list of lower case version of input items
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lower_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input list to lower case.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of lower case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.lower() for item in input_list]</code></pre>
+</details>
+</dd>
+<dt id="helpers.printProgressBar"><code class="name flex">
+<span>def <span class="ident">printProgressBar</span></span>(<span>iteration, total, prefix='Progress:', suffix='Completed', decimals=1, length=100, fill='█', printEnd='\r')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call in a loop to create terminal progress bar.
+:param iteration: current iteration (Required)
+:type iteration: int
+:param total: total iterations (Required)
+:type total: int
+:param prefix: prefix string (Optional)
+:type prefix: str
+:param suffix: suffix string (Optional)
+:type suffix: str
+:param decimals: positive number of decimals in percent complete (Optional)
+:type decimals: int
+:param length: character length of bar (Optional)
+:type length: int
+:param fill: bar fill character (Optional)
+:type fill: str
+:param printEnd: end character (e.g. '
+', '
+') (Optional)
+:type printEnd: str
+:returns: None
+:rtype: str</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def printProgressBar(
+    iteration,
+    total,
+    prefix=&#34;Progress:&#34;,
+    suffix=&#34;Completed&#34;,
+    decimals=1,
+    length=100,
+    fill=&#34;█&#34;,
+    printEnd=&#34;\r&#34;,
+):
+    &#34;&#34;&#34;Call in a loop to create terminal progress bar.
+    :param iteration: current iteration (Required)
+    :type iteration: int
+    :param total: total iterations (Required)
+    :type total: int
+    :param prefix: prefix string (Optional)
+    :type prefix: str
+    :param suffix: suffix string (Optional)
+    :type suffix: str
+    :param decimals: positive number of decimals in percent complete (Optional)
+    :type decimals: int
+    :param length: character length of bar (Optional)
+    :type length: int
+    :param fill: bar fill character (Optional)
+    :type fill: str
+    :param printEnd: end character (e.g. &#39;\r&#39;, &#39;\r\n&#39;) (Optional)
+    :type printEnd: str
+    :returns: None
+    :rtype: str
+    &#34;&#34;&#34;
+    percent = (&#34;{0:.&#34; + str(decimals) + &#34;f}&#34;).format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + &#34;-&#34; * (length - filledLength)
+    print(f&#34;\r{prefix} | {bar} | {percent}% {suffix}&#34;, end=printEnd)
+    # Print New Line on Complete
+    if iteration == total:
+        print()</code></pre>
+</details>
+</dd>
+<dt id="helpers.read_from_file"><code class="name flex">
+<span>def <span class="ident">read_from_file</span></span>(<span>file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reading wordlist provided by the user from file line by line.</p>
+<p>:param file_path: location of input file
+:type file_path: list
+:returns: None
+:rtype: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_from_file(file_path):
+    &#34;&#34;&#34;Reading wordlist provided by the user from file line by line.
+
+    :param file_path: location of input file
+    :type file_path: list
+    :returns: None
+    :rtype: None
+    &#34;&#34;&#34;
+    with open(file_path, &#34;r&#34;) as f:
+        inputs = f.read().splitlines()
+    return inputs</code></pre>
+</details>
+</dd>
+<dt id="helpers.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reverse every item from input.</p>
+<p>:param input_word: list provided by the user
+:type input_word: str
+:returns: reverse version of input word
+:rtype: str</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(input_list):
+    &#34;&#34;&#34;Reverse every item from input.
+
+    :param input_word: list provided by the user
+    :type input_word: str
+    :returns: reverse version of input word
+    :rtype: str
+    &#34;&#34;&#34;
+    return [item[::-1] for item in input_list]</code></pre>
+</details>
+</dd>
+<dt id="helpers.sentence_case"><code class="name flex">
+<span>def <span class="ident">sentence_case</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transform every item from input list to sentence case.</p>
+<p>It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
+example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisalsoatext']</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a list of input items in sentence case version
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sentence_case(input_list):
+    &#34;&#34;&#34;Transform every item from input list to sentence case.
+    
+    It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
+    example: [&#34;thisistext&#34;, &#34;tHisIsALSOateXt&#34;] Transforms to [&#39;Thisistext&#39;, &#39;Thisisalsoatext&#39;]
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of input items in sentence case version
+    :rtype: list
+    &#34;&#34;&#34;
+    sentence_list = []
+    for item in input_list:
+        sentence_word = item[:1].capitalize()
+        sentence_word += item[1:].lower()
+        sentence_list.append(sentence_word)
+
+    return sentence_list</code></pre>
+</details>
+</dd>
+<dt id="helpers.swap_case"><code class="name flex">
+<span>def <span class="ident">swap_case</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transforms every item from input list to swap case (upper to lower and vice versa).</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a list of swap case version of input items
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def swap_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input list to swap case (upper to lower and vice versa).
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of swap case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.swapcase() for item in input_list]</code></pre>
+</details>
+</dd>
+<dt id="helpers.toggle_case"><code class="name flex">
+<span>def <span class="ident">toggle_case</span></span>(<span>input_list, index)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transforms every item from input to toggle case with specified index. </p>
+<p>in toggle case each word begins in lower case and the rest in upper case.
+example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:param index: index of string which Transforms to lower case
+:type index: int
+:returns: a list of toggle case version of input items
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toggle_case(input_list, index):
+    &#34;&#34;&#34;Transforms every item from input to toggle case with specified index. 
+    
+    in toggle case each word begins in lower case and the rest in upper case. 
+    example: toggle_case(input_list = [&#34;rick&#34;], index=0) returns [&#34;rICK&#34;]
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :param index: index of string which Transforms to lower case
+    :type index: int
+    :returns: a list of toggle case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    output_list = []
+    for item in input_list:
+        if _check_input(item):
+            tmpstr = &#34;&#34;
+            try:
+                tmpstr += item[:index].upper()
+                tmpstr += item[index].lower()
+                tmpstr += item[index + 1 :].upper()
+
+                output_list.append(tmpstr)
+            except:
+                pass
+    return output_list</code></pre>
+</details>
+</dd>
+<dt id="helpers.upper_case"><code class="name flex">
+<span>def <span class="ident">upper_case</span></span>(<span>input_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transforms every item from input to upper case.</p>
+<p>:param input_list: wordlist provided by the user
+:type input_list: list
+:returns: a list of upper case version of input items
+:rtype: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def upper_case(input_list):
+    &#34;&#34;&#34;Transforms every item from input to upper case.
+
+    :param input_list: wordlist provided by the user
+    :type input_list: list
+    :returns: a list of upper case version of input items
+    :rtype: list
+    &#34;&#34;&#34;
+    return [item.upper() for item in input_list]</code></pre>
+</details>
+</dd>
+<dt id="helpers.write_to_file"><code class="name flex">
+<span>def <span class="ident">write_to_file</span></span>(<span>wordlist, semaphore, file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write generated wordlist to file.</p>
+<p>:param wordlist: wordlist to write on disk
+:type wordlist: list
+:param semaphore: semaphore for prevent of mutual exclusion (default is 1)
+:type semaphore: multiprocessing.synchronize.Semaphore
+:param file_path: location of output file
+:type file_path: str
+:returns: None
+:rtype: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_to_file(wordlist, semaphore, file_path):
+    &#34;&#34;&#34;Write generated wordlist to file.
+
+    :param wordlist: wordlist to write on disk
+    :type wordlist: list
+    :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
+    :type semaphore: multiprocessing.synchronize.Semaphore
+    :param file_path: location of output file
+    :type file_path: str
+    :returns: None
+    :rtype: None
+    &#34;&#34;&#34;
+    with semaphore:
+        with open(file_path, &#34;a&#34;) as file:
+            for line in wordlist:
+                file.write(f&#34;{line}\n&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="helpers.alternating_case" href="#helpers.alternating_case">alternating_case</a></code></li>
+<li><code><a title="helpers.capitalize" href="#helpers.capitalize">capitalize</a></code></li>
+<li><code><a title="helpers.leet_case" href="#helpers.leet_case">leet_case</a></code></li>
+<li><code><a title="helpers.lower_case" href="#helpers.lower_case">lower_case</a></code></li>
+<li><code><a title="helpers.printProgressBar" href="#helpers.printProgressBar">printProgressBar</a></code></li>
+<li><code><a title="helpers.read_from_file" href="#helpers.read_from_file">read_from_file</a></code></li>
+<li><code><a title="helpers.reverse" href="#helpers.reverse">reverse</a></code></li>
+<li><code><a title="helpers.sentence_case" href="#helpers.sentence_case">sentence_case</a></code></li>
+<li><code><a title="helpers.swap_case" href="#helpers.swap_case">swap_case</a></code></li>
+<li><code><a title="helpers.toggle_case" href="#helpers.toggle_case">toggle_case</a></code></li>
+<li><code><a title="helpers.upper_case" href="#helpers.upper_case">upper_case</a></code></li>
+<li><code><a title="helpers.write_to_file" href="#helpers.write_to_file">write_to_file</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -3,7 +3,7 @@
 This tool accepts two list in form of text file (.txt) or from command line and returns a wordlist in (.txt) format.
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist for education or security audit purposes
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
 
 Usage:
     python drowtsil.py -h

@@ -2,7 +2,7 @@
 """Helpers module contains functions that used to transform words and write generated wordlist to file
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist for education or security audit purposes
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
 
 Usage:
     python drowtsil.py -h
@@ -250,7 +250,6 @@ def printProgressBar(
     printEnd="\r",
 ):
     """Call in a loop to create terminal progress bar.
-
     :param iteration: current iteration (Required)
     :type iteration: int
     :param total: total iterations (Required)
@@ -265,7 +264,7 @@ def printProgressBar(
     :type length: int
     :param fill: bar fill character (Optional)
     :type fill: str
-    :param printEnd: end character (e.g. "\r", "\r\n") (Optional)
+    :param printEnd: end character (e.g. '\r', '\r\n') (Optional)
     :type printEnd: str
     :returns: None
     :rtype: str
