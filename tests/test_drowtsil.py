@@ -225,14 +225,14 @@ class DrowtsilTestCase(unittest.TestCase):
             process=8,
             max=63,
             min=8,
-            upper=True,
-            lower=True,
-            capital=True,
-            leet_case=True,
-            toggle=True,
-            swap=True,
-            sentence=True,
-            alternating=True,
+            upper=False,
+            lower=False,
+            capital=False,
+            leet_case=False,
+            toggle=None,
+            swap=False,
+            sentence=False,
+            alternating=False,
             level=2,
             all=False,
         )
@@ -263,12 +263,12 @@ class DrowtsilTestCase(unittest.TestCase):
             lower=False,
             capital=False,
             leet_case=False,
-            toggle=0,
+            toggle=None,
             swap=False,
             sentence=False,
             alternating=False,
             level=2,
-            all=False,
+            all=True,
         )
 
         with patch("builtins.open", mock_open()) as mock_write_to_file:
@@ -383,6 +383,7 @@ class DrowtsilTestCase(unittest.TestCase):
             tmpinp=None,
             filename=self.fake_input_const_files,
             tmpfile=None,
+            level = None,
         )
       
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
@@ -398,7 +399,7 @@ class DrowtsilTestCase(unittest.TestCase):
                 self.assertEqual(er.error_code, 1)
                 self.assertEqual(
                     er.message,
-                    "[!] ERROR: Input words doesn't provide or the specified directory doesn't exist.\n",
+                    "[!] ERROR: Input constant words or temporary words doesn't provide.\n",
                 )
 
     def test_extract_user_input_args_filename_tmpfile_exist(self):
@@ -407,6 +408,7 @@ class DrowtsilTestCase(unittest.TestCase):
             tmpinp=None,
             filename=self.fake_input_const_files,
             tmpfile=self.fake_input_tmp_files,
+            level = None,
         )
 
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
@@ -427,6 +429,7 @@ class DrowtsilTestCase(unittest.TestCase):
             tmpinp=self.tmp_words,
             filename=self.fake_input_const_files,
             tmpfile=None,
+            level = None,
         )
 
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
@@ -447,6 +450,7 @@ class DrowtsilTestCase(unittest.TestCase):
             tmpinp=None,
             filename=None,
             tmpfile=self.fake_input_tmp_files,
+            level = None,
         )
 
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
@@ -467,6 +471,7 @@ class DrowtsilTestCase(unittest.TestCase):
             tmpinp=self.tmp_words,
             filename=None,
             tmpfile=None,
+            level = None,
         )
 
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
@@ -481,12 +486,55 @@ class DrowtsilTestCase(unittest.TestCase):
                 (["riCk", "moRty"], ["42"]),
             )
 
+    def test_extract_user_input_args_input_just_exist_in_level_zero(self):
+        args_input_just_exist_in_level_zero = Namespace(
+            input=self.const_words,
+            tmpinp=None,
+            filename=None,
+            tmpfile=None,
+            level = 0,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            self.assertEqual(
+                drowtsil._extract_user_input(
+                    args_input_just_exist_in_level_zero,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                ),
+                (['riCk', 'moRty'], 'empty'),
+            )
+    
+    def test_extract_user_input_args_filename_just_exist_in_level_zero(self):
+        args_filename_just_exist_in_level_zero = Namespace(
+            input=None,
+            tmpinp=None,
+            filename=self.fake_input_const_files,
+            tmpfile=None,
+            level = 0,
+        )
+
+        with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
+            mock_read_from_filename_tmpfile.return_value = ["mock value"]
+
+            self.assertEqual(
+                drowtsil._extract_user_input(
+                    args_filename_just_exist_in_level_zero,
+                    self.parser,
+                    mock_read_from_filename_tmpfile,
+                ),
+                (['mock value'], 'empty'),
+            )
+
     def test_extract_user_input_args_does_not_exist(self):
         args_does_not_exist = Namespace(
             input=None,
             tmpinp=None,
             filename=None,
             tmpfile=None,
+            level = None,
         )
 
         with patch("builtins.open", mock_open()) as mock_read_from_filename_tmpfile:
@@ -502,7 +550,7 @@ class DrowtsilTestCase(unittest.TestCase):
                 self.assertEqual(er.error_code, 1)
                 self.assertEqual(
                     er.message,
-                    "[!] ERROR: Input words doesn't provide or the specified directory doesn't exist.\n",
+                    "[!] ERROR: Input constant words or temporary words doesn't provide.\n",
                 )
 
     def test_checking_permutation_number_answer_no(self):

@@ -95,10 +95,10 @@ class DrowtsilHelpersTestCase(unittest.TestCase):
         expected_list_swap_case = helpers.swap_case(self.input_words)
         self.assertCountEqual(expected_list_swap_case, ["RIcK", "MOrTY", "42"])
 
-    def test_toggle_case(self):
+    def test_toggle_case_with_index(self):
         expected_list_toggle_case = helpers.toggle_case(self.input_words, index=0)
         self.assertCountEqual(expected_list_toggle_case, ["rICK", "mORTY"])
-
+             
     def test_reverse(self):
         expected_list_reverse = helpers.reverse(self.input_words)
         self.assertCountEqual(expected_list_reverse, ["kCir", "ytRom", "24"])

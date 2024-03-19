@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Helpers module contains functions that used to transform words and write generated wordlist to file
 
 Program:
@@ -204,7 +203,7 @@ def toggle_case(input_list, index):
                 tmpstr += item[index + 1 :].upper()
 
                 output_list.append(tmpstr)
-            except:
+            except IndexError:
                 pass
     return output_list
 

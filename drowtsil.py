@@ -58,26 +58,6 @@ logo = """
 """
 
 
-def _add_pattern(word, pattern_dict):
-    """Add pattern which provided by the user to specified index of word
-
-    :param word: a word from wordlist
-    :type word: str
-    :param pattern_dict: a dictionary of pattern  in shape {index:"pattern"} (index 0 for first of word, 1000 for end of word)
-    :type pattern_dict: dict
-    :returns: a word with appended pattern
-    :rtype: str
-    """
-    for i in pattern_dict.keys():
-        if i == 0:
-            word = pattern_dict.get(i) + word
-        elif i == 1000:
-            word = word + pattern_dict.get(i)
-        else:
-            word = word[:i] + pattern_dict.get(i) + word[i:]
-    return word
-
-
 def _create_parser(process_number_default):
     """Create and return a parser (argparse.ArgumentParser instance) for main() function.
 
@@ -101,6 +81,7 @@ def _create_parser(process_number_default):
         "--tmpinp",
         type=str,
         nargs="+",
+        default=None,
         help="List of temporary input words, every time each one\n\t selected and add to constant words list",
     )
     parser.add_argument(
@@ -110,6 +91,7 @@ def _create_parser(process_number_default):
         "-ft",
         "--tmpfile",
         type=str,
+        default=None,
         help="Path to temporary Wordlist file, every time each one selected\n\t and add to constant words list",
     )
     parser.add_argument(
@@ -117,7 +99,7 @@ def _create_parser(process_number_default):
         "--output",
         type=str,
         default="./output.txt",
-        help="Path of generated wordlist",
+        help="Path of generated wordlist (default is \"./output.txt\")",
     )
     #user's prefer options
     parser.add_argument(
@@ -126,7 +108,7 @@ def _create_parser(process_number_default):
         type=int,
         default=2,
         choices=[0, 1, 2],
-        help="Level of operation (0,1,2)",
+        help="Level of operation (0,1,2) (default is 2)",
     )
     parser.add_argument(
         "-p",
@@ -144,7 +126,7 @@ def _create_parser(process_number_default):
         "--pernumber",
         type=int,
         default=2,
-        help="Minimum number of words to generate permutations",
+        help="Minimum number of words to generate permutations like start with 2 word permutation (default is 2)",
     )
     parser.add_argument(
         "-ps",
@@ -153,13 +135,13 @@ def _create_parser(process_number_default):
         nargs="?",
         const=process_number_default,
         default=None,
-        help="Number of processes in pool(default is number of logical cores - 1)",
+        help="Number of processes in pool (default is number of logical cores - 1)",
     )
     parser.add_argument(
-        "-max", type=int, default=63, help="Maximum lenght of preshared key"
+        "-max", type=int, default=63, help="Maximum lenght of preshared key (default is 63)"
     )
     parser.add_argument(
-        "-min", type=int, default=8, help="Minimum lenght of preshared key"
+        "-min", type=int, default=8, help="Minimum lenght of preshared key (default is 8)"
     )
     #operations options
     parser.add_argument(
@@ -184,7 +166,7 @@ def _create_parser(process_number_default):
         default=None,
         const=0,
         nargs="?",
-        help="Enable toggle case function with index [default=0]",
+        help="Enable toggle case function with index (default is 0)",
     )
     parser.add_argument(
         "-s", "--swap", action="store_true", help="Enable swap case function"
@@ -202,7 +184,7 @@ def _create_parser(process_number_default):
         help="transform text into form that alternates between lowercase and upper case",
     )
     parser.add_argument(
-        "-all", action="store_true", help="Apply all text transform functions in level 0"
+        "-all", action="store_true", help="Apply all text transform functions in level 0 and 2"
     )
 
     return parser
@@ -242,7 +224,7 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
 
         word_counter = _add_to_wordlist(wordlist, word, min, max, regexp, word_counter)
         #apply capitalize operation in level 2
-        if level == 2 and not capital:
+        if level == 2 and capital:
             cap_word = "".join(helpers.capitalize(item))
             if pattern_dict:
                 cap_word = _add_pattern(cap_word, pattern_dict)
@@ -252,6 +234,25 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
             )
 
     return wordlist, word_counter
+
+def _add_pattern(word, pattern_dict):
+    """Add pattern which provided by the user to specified index of word
+
+    :param word: a word from wordlist
+    :type word: str
+    :param pattern_dict: a dictionary of pattern  in shape {index:"pattern"} (index 0 for first of word, 1000 for end of word)
+    :type pattern_dict: dict
+    :returns: a word with appended pattern
+    :rtype: str
+    """
+    for i in pattern_dict.keys():
+        if i == 0:
+            word = pattern_dict.get(i) + word
+        elif i == 1000:
+            word = word + pattern_dict.get(i)
+        else:
+            word = word[:i] + pattern_dict.get(i) + word[i:]
+    return word
 
 
 def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
@@ -315,6 +316,8 @@ def level_zero(args, current_words):
         words += helpers.lower_case(current_words)
         output_print.append("lower case")
     if args.all or args.toggle is not None:
+        if args.all and args.toggle is None:
+            args.toggle = 0
         words += helpers.toggle_case(current_words, args.toggle)
         output_print.append("toggle case")
     if args.all or args.swap:
@@ -371,28 +374,30 @@ def level_two(
     """
     write_function(wordlist, semaphore, output_dir)
     temp_wordlist = []
-    if not args.leet_case:
+    if args.all or args.leet_case:
         temp_wordlist += helpers.leet_case(wordlist)
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         #clear temp wordlist to save memory
         temp_wordlist.clear()
-    if not args.upper:
+    if args.all or args.upper:
         temp_wordlist += set(helpers.upper_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.sentence:
+    if args.all or args.sentence:
         temp_wordlist += set(helpers.sentence_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
-        temp_wordlist.clear()
-    if not args.toggle:
+        temp_wordlist.clear() 
+    if args.all or args.toggle is not None:
+        if args.all and args.toggle is None:
+            args.toggle = 0
         temp_wordlist += set(helpers.toggle_case(wordlist, index=args.toggle))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.alternating:
+    if args.all or args.alternating:
         temp_wordlist += set(helpers.alternating_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
@@ -436,10 +441,20 @@ def _extract_user_input(args, parser, read_function):
         elif args.input and args.tmpinp:
             cons_words = args.input
             tmp_words = args.tmpinp
+        
+        elif args.input and args.level == 0:
+            cons_words = args.input
+            tmp_words = "empty"
+
+        elif args.filename and args.level == 0:
+            target_cons_dir = Path(args.filename)
+            cons_words = read_function(target_cons_dir)
+            tmp_words = "empty"
+
         else:
             parser.exit(
                 1,
-                message="[!] ERROR: Input words doesn't provide or the specified directory doesn't exist.\n",
+                message="[!] ERROR: Input constant words or temporary words doesn't provide.\n",
             )
     except FileNotFoundError:
         parser.exit(
@@ -562,16 +577,13 @@ def main(args=None):
 
             # checking for levels
             if args.level == 0:
-                words, output_print = level_zero(args, current_words)
+                words, output_print = level_zero(args, cons_words)
                 write_function(words, semaphore, output_dir)
-                print(f"These opertations have been done:\n")
-                for item in output_print:
-                    print(f"-{item}\n")
 
             else:
                 # checking for high number of permutations
-               if len_input >= 12:
-                _checking_permutation_number(len_input, parser)
+                if len_input+1 >= 12:
+                    _checking_permutation_number(len_input, parser)
                 #calculate permutation without multiprocessing
                 if not args.process:
                     for i in range(args.pernumber, len_input + 2):
@@ -592,6 +604,7 @@ def main(args=None):
 
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
+                            
                         if args.level == 2:
                             word_counter = level_two(
                                 wordlist,
@@ -650,6 +663,11 @@ def main(args=None):
             )
     except KeyboardInterrupt:
         print("Keyboard Interrupt occurred!")
+
+    if args.level == 0:
+        print(f"These opertations have been done:\n")
+        for item in output_print:
+            print(f"-{item}\n")
 
     if args.level != 0:
         print(
