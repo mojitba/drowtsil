@@ -106,9 +106,9 @@ def _create_parser(process_number_default):
         "-l",
         "--level",
         type=int,
-        default=2,
-        choices=[0, 1, 2],
-        help="Level of operation (0,1,2) (default is 2)",
+        default=1,
+        choices=[0, 1, 2, 3],
+        help="Level of operation (0,1,2,3) (default is 1)",
     )
     parser.add_argument(
         "-p",
@@ -186,7 +186,12 @@ def _create_parser(process_number_default):
     parser.add_argument(
         "-all", action="store_true", help="Apply all text transform functions in level 0 and 2"
     )
-
+    parser.add_argument(
+        "-n","--numbers", type=int, default=0, help="Add numbers at the end of strings in level"
+    )
+    parser.add_argument(
+        "-ch","--chars", action="store_true", help="Add characters at the end of strings in level"
+    )
     return parser
 
 
@@ -337,8 +342,57 @@ def level_zero(args, current_words):
         output_print.append("alternating")
     return set(words), output_print
 
+def level_one(constant_words, temporary_words, numbers, chars):
+    wordlist = []
+    urls = _is_url(constant_words)
 
-def level_two(
+    if urls:
+        for url in urls:
+            if numbers:
+                for i in range(numbers):
+                    try:
+                        new_url = "".join(url[0]+str(i)+url[1])
+                    except IndexError:
+                        new_url = "".join(url[0]+str(i))
+                    wordlist.append(new_url)
+            if temporary_words != "":
+                for tmp_item in temporary_words:
+                    try:
+                        new_url = "".join(url[0]+str(tmp_item)+url[1])
+                    except IndexError:
+                        new_url = "".join(url[0]+str(tmp_item))
+                    wordlist.append(new_url)
+            if chars:
+                for char_item in helpers.characters:
+                    try:
+                        new_url = "".join(url[0]+str(char_item)+url[1])
+                    except IndexError:
+                        new_url = "".join(url[0]+str(char_item))
+                    wordlist.append(new_url)
+
+    else:
+        if numbers:
+            for i in range(numbers):
+                for item in constant_words:
+                    wordlist.append(item + str(i))
+        if temporary_words != "":
+            for tmp_item in temporary_words:
+                for item in constant_words:
+                    wordlist.append(item + tmp_item)
+        if chars:
+            for char_item in helpers.characters:
+                for item in constant_words:
+                    wordlist.append(item + char_item)
+                    
+    return wordlist, len(wordlist)
+
+
+def _is_url(input_list):
+    urls = [re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+', item) for item in input_list]
+    split_urls =[re.split(r"([.]{1}[a-zA-Z]+$)", item[0]) for item in urls ]
+    return split_urls
+
+def level_three(
     wordlist,
     args,
     output_dir,
@@ -442,14 +496,14 @@ def _extract_user_input(args, parser, read_function):
             cons_words = args.input
             tmp_words = args.tmpinp
         
-        elif args.input and args.level == 0:
+        elif args.input and (args.level == 0 or args.level == 1):
             cons_words = args.input
-            tmp_words = "empty"
+            tmp_words = ""
 
-        elif args.filename and args.level == 0:
+        elif args.filename and (args.level == 0 or args.level == 1):
             target_cons_dir = Path(args.filename)
             cons_words = read_function(target_cons_dir)
-            tmp_words = "empty"
+            tmp_words = ""
 
         else:
             parser.exit(
@@ -567,20 +621,22 @@ def main(args=None):
         pass
     
     try:
-        if args.level != 0:
+        if args.level == 0:
+                wordlist, output_print = level_zero(args, cons_words)
+                write_function(wordlist, semaphore, output_dir)
+                word_counter = len(wordlist)
+
+        elif args.level == 1:
+                wordlist, word_counter = level_one(cons_words, tmp_words, args.numbers, args.chars)
+                write_function(wordlist, semaphore, output_dir)
+        
+        else:
             print_bar(iteration_number, total, length=50)
 
-        for item in tmp_words:
-            #each time initialize a list of words from constant list and one item from temporary list
-            current_words = [item]
-            current_words += cons_words
-
-            # checking for levels
-            if args.level == 0:
-                words, output_print = level_zero(args, cons_words)
-                write_function(words, semaphore, output_dir)
-
-            else:
+            for item in tmp_words:
+                #each time initialize a list of words from constant list and one item from temporary list
+                current_words = [item]
+                current_words += cons_words
                 # checking for high number of permutations
                 if len_input+1 >= 12:
                     _checking_permutation_number(len_input, parser)
@@ -599,14 +655,14 @@ def main(args=None):
                             word_counter,
                         )
 
-                        if args.level == 1:
+                        if args.level == 2:
                             write_function(wordlist, semaphore, output_dir)
 
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
                             
-                        if args.level == 2:
-                            word_counter = level_two(
+                        if args.level == 3:
+                            word_counter = level_three(
                                 wordlist,
                                 args,
                                 output_dir,
@@ -616,7 +672,7 @@ def main(args=None):
                             )
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
-                else:
+                if args.process:
                     starmap_iterable = [
                         (current_words, i) for i in range(args.pernumber, len_input + 2)
                     ]
@@ -641,7 +697,7 @@ def main(args=None):
                                     iteration_number, total, length=50
                                 )
                             if args.level == 2:
-                                word_counter = level_two(
+                                word_counter = level_three(
                                     wordlist,
                                     args,
                                     output_dir,
@@ -669,10 +725,10 @@ def main(args=None):
         for item in output_print:
             print(f"-{item}\n")
 
-    if args.level != 0:
-        print(
-            f"Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil"
-        )
+    
+    print(
+        f"Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil"
+    )
 
 
 if __name__ == "__main__":

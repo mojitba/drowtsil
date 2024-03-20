@@ -214,7 +214,27 @@ class DrowtsilTestCase(unittest.TestCase):
             ],
         )
 
-    def test_level_two_args_all_disabled(self):
+    def test_level_one_with_urls(self):
+        numbers = 3
+        chars = False
+        constant_words = ['www.website.com/index.php','http://website.org/index.html','https://website.org/home.html','https://website.org/item=']
+        temporary_words = ""
+        _ , word_counter = drowtsil.level_one(constant_words, temporary_words, numbers, chars)
+        self.assertEqual(word_counter, 12)
+    
+    def test_level_one_with_urls(self):
+        numbers = 0
+        chars = True
+        constant_words = ['www.website.com/index','http://website.org/index','https://website.org/home','https://website.org/item=']
+        temporary_words = ["list", "#"]
+        _, word_counter = drowtsil.level_one(constant_words, temporary_words, numbers, chars)
+        self.assertEqual(word_counter, 112)
+    
+    def test_is_url(self):
+        input_list = ['www.website.com/index.php']
+        self.assertEqual(drowtsil._is_url(input_list), [['www.website.com/index', '.php', '']])
+
+    def test_level_three_args_all_disabled(self):
         args_all_disabled = Namespace(
             input=self.const_words,
             tmpinp=self.tmp_words,
@@ -238,7 +258,7 @@ class DrowtsilTestCase(unittest.TestCase):
         )
                 
         with patch("builtins.open", mock_open()) as mock_write_to_file:
-            word_counter = drowtsil.level_two(
+            word_counter = drowtsil.level_three(
                 self.expected_words,
                 args_all_disabled,
                 self.fake_output_path,
@@ -248,7 +268,7 @@ class DrowtsilTestCase(unittest.TestCase):
             )
             self.assertEqual(word_counter, 0)
 
-    def test_level_two_args_all_enabled(self):
+    def test_level_three_args_all_enabled(self):
         args_all_enabled = Namespace(
             input=self.const_words,
             tmpinp=self.tmp_words,
@@ -272,7 +292,7 @@ class DrowtsilTestCase(unittest.TestCase):
         )
 
         with patch("builtins.open", mock_open()) as mock_write_to_file:
-            word_counter = drowtsil.level_two(
+            word_counter = drowtsil.level_three(
                 self.expected_words,
                 args_all_enabled,
                 self.fake_output_path,
@@ -340,6 +360,8 @@ class DrowtsilTestCase(unittest.TestCase):
             "reverse": False,
             "alternating": False,
             "all" : False,
+            "numbers": False,
+            "chars": False,
         }
 
         test_process_number_default = 0
@@ -504,7 +526,7 @@ class DrowtsilTestCase(unittest.TestCase):
                     self.parser,
                     mock_read_from_filename_tmpfile,
                 ),
-                (['riCk', 'moRty'], 'empty'),
+                (['riCk', 'moRty'], ''),
             )
     
     def test_extract_user_input_args_filename_just_exist_in_level_zero(self):
@@ -525,7 +547,7 @@ class DrowtsilTestCase(unittest.TestCase):
                     self.parser,
                     mock_read_from_filename_tmpfile,
                 ),
-                (['mock value'], 'empty'),
+                (['mock value'], ''),
             )
 
     def test_extract_user_input_args_does_not_exist(self):

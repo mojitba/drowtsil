@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 See 'LICENSE' for more information.
 
 """
+# for leet code transformation
 substitutions = {
     "a": "@",
     "s": "$",
@@ -38,7 +39,8 @@ substitutions = {
     "e": "3",
     "z": "2",
 }
-
+#for level one transformation
+characters = ['a', 'b', 'c', 'd', 'e' ,'f' ,'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'u', 'w', 'x', 'y', 'z']
 
 def alternating_case(input_list):
     """Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.
