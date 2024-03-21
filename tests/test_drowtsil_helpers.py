@@ -1,7 +1,7 @@
-"""Unit tests for helper functions (modules/helpers.py)
+"""Unit tests for helper functions (src/modules/helpers.py)
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist for education or security audit purposes
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes
 
 Usage:
     python drowtsil.py -h

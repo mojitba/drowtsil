@@ -1,7 +1,7 @@
 """Unit tests for main file (drowtsil.py)
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist for education or security audit purposes
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes
 
 Usage:
     python drowtsil.py -h
@@ -230,9 +230,13 @@ class DrowtsilTestCase(unittest.TestCase):
         _, word_counter = drowtsil.level_one(constant_words, temporary_words, numbers, chars)
         self.assertEqual(word_counter, 112)
     
-    def test_is_url(self):
+    def test_is_url_valid(self):
         input_list = ['www.website.com/index.php']
         self.assertEqual(drowtsil._is_url(input_list), [['www.website.com/index', '.php', '']])
+    
+    def test_is_url_invalid(self):
+        input_list = ['Not_a_url']
+        self.assertEqual(drowtsil._is_url(input_list), [])
 
     def test_level_three_args_all_disabled(self):
         args_all_disabled = Namespace(

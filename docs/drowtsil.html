@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>drowtsil API documentation</title>
-<meta name="description" content="This script allows the user to create wordlist for targeted subject. Use only for educational or security audit purposes …" />
+<meta name="description" content="This script allows the user to create wordlist for targeted subject. Use only for security audit, penetration testing and education purposes …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,15 +22,15 @@
 <h1 class="title">Module <code>drowtsil</code></h1>
 </header>
 <section id="section-intro">
-<p>This script allows the user to create wordlist for targeted subject. Use only for educational or security audit purposes.</p>
+<p>This script allows the user to create wordlist for targeted subject. Use only for security audit, penetration testing and education purposes.</p>
 <p>This tool accepts two list in form of text file (.txt) or from command line and returns a wordlist in (.txt) format.</p>
 <h2 id="program">Program</h2>
-<p>Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.</p>
+<p>Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes</p>
 <h2 id="usage">Usage</h2>
 <p>python drowtsil.py -h</p>
 <h2 id="author">Author</h2>
 <p>Mojtaba Hemmati
-github.com/mojitba 3/13/2024</p>
+github.com/moji1tba 3/21/2024</p>
 <p>License:
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -51,19 +51,19 @@ USA</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;This script allows the user to create wordlist for targeted subject. Use only for educational or security audit purposes.
+<pre><code class="python">&#34;&#34;&#34;This script allows the user to create wordlist for targeted subject. Use only for security audit, penetration testing and education purposes.
 
 This tool accepts two list in form of text file (.txt) or from command line and returns a wordlist in (.txt) format.
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes
 
 Usage:
     python drowtsil.py -h
 
 Author:
     Mojtaba Hemmati
-    github.com/mojitba 3/13/2024
+    github.com/moji1tba 3/21/2024
 
 License:
 This program is free software; you can redistribute it and/or modify
@@ -111,32 +111,12 @@ logo = &#34;&#34;&#34;
 &#34;&#34;&#34;
 
 
-def _add_pattern(word, pattern_dict):
-    &#34;&#34;&#34;Add pattern which provided by the user to specified index of word
-
-    :param word: a word from wordlist
-    :type word: str
-    :param pattern_dict: a dictionary of pattern  in shape {index:&#34;pattern&#34;} (index 0 for first of word, 1000 for end of word)
-    :type pattern_dict: dict
-    :returns: a word with appended pattern
-    :rtype: str
-    &#34;&#34;&#34;
-    for i in pattern_dict.keys():
-        if i == 0:
-            word = pattern_dict.get(i) + word
-        elif i == 1000:
-            word = word + pattern_dict.get(i)
-        else:
-            word = word[:i] + pattern_dict.get(i) + word[i:]
-    return word
-
-
 def _create_parser(process_number_default):
     &#34;&#34;&#34;Create and return a parser (argparse.ArgumentParser instance) for main() function.
 
-    :param process_number_default: default value for the number of process (compute with multiprocessing.cpu_count())
+    :param process_number_default: default value for the number of processes (compute with multiprocessing.cpu_count())
     :type input_list: int
-    :returns: an instance from argparse.ArgumentParser class contains switchs with their values.
+    :returns: an instance from argparse.ArgumentParser class contains switches with their values.
     :rtype: &lt;class &#39;argparse.ArgumentParser&#39;&gt;
     &#34;&#34;&#34;
 
@@ -154,7 +134,8 @@ def _create_parser(process_number_default):
         &#34;--tmpinp&#34;,
         type=str,
         nargs=&#34;+&#34;,
-        help=&#34;List of temporary input words, every time each one\n\t selected and add to constant words list&#34;,
+        default=None,
+        help=&#34;List of temporary input words, every time each one is\n\t selected and added to constant words list&#34;,
     )
     parser.add_argument(
         &#34;-f&#34;, &#34;--filename&#34;, type=str, help=&#34;Path to constant Wordlist file&#34;
@@ -163,23 +144,24 @@ def _create_parser(process_number_default):
         &#34;-ft&#34;,
         &#34;--tmpfile&#34;,
         type=str,
-        help=&#34;Path to temporary Wordlist file, every time each one selected\n\t and add to constant words list&#34;,
+        default=None,
+        help=&#34;Path to temporary Wordlist file, every time each one selected\n\t and added to constant words list&#34;,
     )
     parser.add_argument(
         &#34;-o&#34;,
         &#34;--output&#34;,
         type=str,
         default=&#34;./output.txt&#34;,
-        help=&#34;Path of generated wordlist&#34;,
+        help=&#34;Path of generated wordlist (default is \&#34;./output.txt\&#34;)&#34;,
     )
     #user&#39;s prefer options
     parser.add_argument(
         &#34;-l&#34;,
         &#34;--level&#34;,
         type=int,
-        default=2,
-        choices=[0, 1, 2],
-        help=&#34;Level of operation (0,1,2)&#34;,
+        default=1,
+        choices=[0, 1, 2, 3],
+        help=&#34;Level of operation (0,1,2,3) (default is 1)&#34;,
     )
     parser.add_argument(
         &#34;-p&#34;,
@@ -187,7 +169,7 @@ def _create_parser(process_number_default):
         type=str,
         nargs=&#34;+&#34;,
         default=None,
-        help=&#39;Pattern of words, Enter like &#34;pattern&#34; &#34;index&#34;. Example: 0 for first and 1000 for end of word or other indexes&#39;,
+        help=&#39;Pattern of words, Enter like &#34;pattern&#34; &#34;index&#34;. Example: 0 for first and 1000 for the end of word or other indexes&#39;,
     )
     parser.add_argument(
         &#34;-r&#34;, &#34;--regex&#34;, type=str, default=None, help=&#34;Regex to match words&#34;
@@ -197,7 +179,7 @@ def _create_parser(process_number_default):
         &#34;--pernumber&#34;,
         type=int,
         default=2,
-        help=&#34;Minimum number of words to generate permutations&#34;,
+        help=&#34;Minimum number of words to generate permutations like start with 2-word permutation (default is 2)&#34;,
     )
     parser.add_argument(
         &#34;-ps&#34;,
@@ -206,13 +188,13 @@ def _create_parser(process_number_default):
         nargs=&#34;?&#34;,
         const=process_number_default,
         default=None,
-        help=&#34;Number of processes in pool(default is number of logical cores - 1)&#34;,
+        help=&#34;Number of processes in the pool (default is number of logical cores - 1)&#34;,
     )
     parser.add_argument(
-        &#34;-max&#34;, type=int, default=63, help=&#34;Maximum lenght of preshared key&#34;
+        &#34;-max&#34;, type=int, default=63, help=&#34;Maximum length of the preshared key (default is 63)&#34;
     )
     parser.add_argument(
-        &#34;-min&#34;, type=int, default=8, help=&#34;Minimum lenght of preshared key&#34;
+        &#34;-min&#34;, type=int, default=8, help=&#34;Minimum length of the preshared key (default is 8)&#34;
     )
     #operations options
     parser.add_argument(
@@ -228,7 +210,7 @@ def _create_parser(process_number_default):
         &#34;-lt&#34;,
         &#34;--leet_case&#34;,
         action=&#34;store_true&#34;,
-        help=&#34;Enable leet case function, replce &#39;a&#39; with &#39;@&#39;, &#39;s&#39; with &#39;$&#39; and etc&#34;,
+        help=&#34;Enable leet case function, replace &#39;a&#39; with &#39;@&#39;, &#39;s&#39; with &#39;$&#39; and etc&#34;,
     )
     parser.add_argument(
         &#34;-t&#34;,
@@ -237,7 +219,7 @@ def _create_parser(process_number_default):
         default=None,
         const=0,
         nargs=&#34;?&#34;,
-        help=&#34;Enable toggle case function with index [default=0]&#34;,
+        help=&#34;Enable toggle case function with index (default is 0)&#34;,
     )
     parser.add_argument(
         &#34;-s&#34;, &#34;--swap&#34;, action=&#34;store_true&#34;, help=&#34;Enable swap case function&#34;
@@ -252,21 +234,26 @@ def _create_parser(process_number_default):
         &#34;-a&#34;,
         &#34;--alternating&#34;,
         action=&#34;store_true&#34;,
-        help=&#34;transform text into form that alternates between lowercase and upper case&#34;,
+        help=&#34;transform text into the form that alternates between lowercase and uppercase&#34;,
     )
     parser.add_argument(
-        &#34;-all&#34;, action=&#34;store_true&#34;, help=&#34;Apply all text transform functions in level 0&#34;
+        &#34;-all&#34;, action=&#34;store_true&#34;, help=&#34;Apply all text transform functions in levels 0 and 3&#34;
     )
-
+    parser.add_argument(
+        &#34;-n&#34;,&#34;--numbers&#34;, type=int, default=0, help=&#34;Add consecutive numbers at the end of strings in level 1&#34;
+    )
+    parser.add_argument(
+        &#34;-ch&#34;,&#34;--chars&#34;, action=&#34;store_true&#34;, help=&#34;Add consecutive characters at the end of strings in level 1&#34;
+    )
     return parser
 
 
 def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_counter):
-    &#34;&#34;&#34;Get a iterable object and create a wordlist with selected options 
+    &#34;&#34;&#34;Get an iterable object and create a wordlist with selected options 
     
-    Create wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
-    tuples. if specific pattern is provided, it will be added and then pass to helper function (_add_to_wordlist). if
-    level selected by the user is 2 and capital switch doesn&#39;t disable, capitalized words also are added to wordlist.
+    Create a wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
+    tuples. if a specific pattern is provided, it will be added and then passed to the private function (_add_to_wordlist). if
+    the level selected by the user is 2 and the capital switch doesn&#39;t disable, capitalized words also are added to the wordlist.
 
     :param iter: iterable returns from itertools.permutations
     :type iter: itertools.permutations
@@ -282,7 +269,7 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
     :type regexp: str
     :param pattern_dict: pattern provided by the user
     :type pattern_dict: dict
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :returns: returns a list of generated words and their number
     :rtype: tuple
@@ -295,7 +282,7 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
 
         word_counter = _add_to_wordlist(wordlist, word, min, max, regexp, word_counter)
         #apply capitalize operation in level 2
-        if level == 2 and not capital:
+        if level == 2 and capital:
             cap_word = &#34;&#34;.join(helpers.capitalize(item))
             if pattern_dict:
                 cap_word = _add_pattern(cap_word, pattern_dict)
@@ -306,13 +293,32 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
 
     return wordlist, word_counter
 
+def _add_pattern(word, pattern_dict):
+    &#34;&#34;&#34;Add the pattern provided by the user to the specified index of the word
+
+    :param word: a word from the wordlist
+    :type word: str
+    :param pattern_dict: a dictionary of pattern  in shape {index:&#34;pattern&#34;} (index 0 for first of word, 1000 for end of word)
+    :type pattern_dict: dict
+    :returns: a word with an appended pattern
+    :rtype: str
+    &#34;&#34;&#34;
+    for i in pattern_dict.keys():
+        if i == 0:
+            word = pattern_dict.get(i) + word
+        elif i == 1000:
+            word = word + pattern_dict.get(i)
+        else:
+            word = word[:i] + pattern_dict.get(i) + word[i:]
+    return word
+
 
 def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
-    &#34;&#34;&#34;A private function that adds a word to wordlist.
+    &#34;&#34;&#34;A private function that adds a word to the wordlist.
 
     :param wordlist: an empty list for adding words 
     :type wordlist: list
-    :param word: generated word that is going to add to wordlist
+    :param word: generated word that is going to be added to the wordlist
     :type word: str
     :param min: minimum size of word by char
     :type min: int
@@ -320,7 +326,7 @@ def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
     :type max: int
     :param regexp: regex pattern to match
     :type regexp: str
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :returns: returns number of generated words
     :rtype: int
@@ -339,7 +345,7 @@ def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
 
 
 def level_zero(args, current_words):
-    &#34;&#34;&#34;It performs when user&#39;s selected level is 0. get a list of words and arguments provided by the user and apply selected functions on
+    &#34;&#34;&#34;It performs when the user&#39;s selected level is 0. Get a list of words and arguments provided by the user and apply selected functions on
       all items.
 
     list of functions: 
@@ -368,6 +374,8 @@ def level_zero(args, current_words):
         words += helpers.lower_case(current_words)
         output_print.append(&#34;lower case&#34;)
     if args.all or args.toggle is not None:
+        if args.all and args.toggle is None:
+            args.toggle = 0
         words += helpers.toggle_case(current_words, args.toggle)
         output_print.append(&#34;toggle case&#34;)
     if args.all or args.swap:
@@ -387,8 +395,78 @@ def level_zero(args, current_words):
         output_print.append(&#34;alternating&#34;)
     return set(words), output_print
 
+def level_one(constant_words, temporary_words, numbers, chars):
+    &#34;&#34;&#34;It performs when the user&#39;s selected level is 1. Get a list of URLs or other texts and add consecutive numbers or letters or
+    items of temporary_words at the end.
+    
+    :param constant_words: a list of constant words
+    :type constant_words: list
+    :param temporary_words: a list of temporary words
+    :type temporary_words: list
+    :param numbers: limit for consecutive numbers - also enable this feature
+    :type numbers: int
+    :param chars: enable adding consecutive characters
+    :type chars: bool
+    :returns: a tuple contains a list of transformed words and the length of the wordlist 
+    :rtype: tuple
+    &#34;&#34;&#34;
+    wordlist = []
+    urls = _is_url(constant_words)
+    # if input list contains urls
+    if urls:
+        for url in urls:
+            if numbers:
+                for i in range(numbers):
+                    try:
+                        new_url = &#34;&#34;.join(url[0]+str(i)+url[1])
+                    except IndexError:
+                        new_url = &#34;&#34;.join(url[0]+str(i))
+                    wordlist.append(new_url)
+            if temporary_words != &#34;&#34;:
+                for tmp_item in temporary_words:
+                    try:
+                        new_url = &#34;&#34;.join(url[0]+str(tmp_item)+url[1])
+                    except IndexError:
+                        new_url = &#34;&#34;.join(url[0]+str(tmp_item))
+                    wordlist.append(new_url)
+            if chars:
+                for char_item in helpers.characters:
+                    try:
+                        new_url = &#34;&#34;.join(url[0]+str(char_item)+url[1])
+                    except IndexError:
+                        new_url = &#34;&#34;.join(url[0]+str(char_item))
+                    wordlist.append(new_url)
+    # if input list does not contain urls.
+    else:
+        if numbers:
+            for i in range(numbers):
+                for item in constant_words:
+                    wordlist.append(item + str(i))
+        if temporary_words != &#34;&#34;:
+            for tmp_item in temporary_words:
+                for item in constant_words:
+                    wordlist.append(item + tmp_item)
+        if chars:
+            for char_item in helpers.characters:
+                for item in constant_words:
+                    wordlist.append(item + char_item)
+                    
+    return wordlist, len(wordlist)
 
-def level_two(
+
+def _is_url(input_list):
+    &#34;&#34;&#34;It&#39;s a private function for checking if the list contains URLs or not.
+    
+    :param input_list: list of strings
+    :type input_list: list
+    :returns: a list of lists containing URLs and their suffixes.
+    :rtype: list
+    &#34;&#34;&#34;
+    urls = [re.findall(&#39;(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&amp;?=%.]+&#39;, item) for item in input_list]
+    split_urls =[re.split(r&#34;([.]{1}[a-zA-Z]+$)&#34;, item[0]) for item in urls ]
+    return split_urls
+
+def level_three(
     wordlist,
     args,
     output_dir,
@@ -396,8 +474,8 @@ def level_two(
     semaphore,
     write_function,
 ):
-    &#34;&#34;&#34;It performs when user&#39;s selected level is 2. get a list of words and arguments provided by the user and apply selected functions on
-      every item of wordlist.
+    &#34;&#34;&#34;It performs when the user&#39;s selected level is 2. Get a list of words and arguments provided by the user and apply selected functions on
+      every item of the wordlist.
 
       list of functions: 
       -upper case
@@ -411,9 +489,9 @@ def level_two(
     :type wordlist: list
     :param args: arguments provided by the user
     :type args: &lt;class &#39;__main__.Namespace&#39;&gt;
-    :param output_dir: path to output directory
+    :param output_dir: path to the output directory
     :type output_dir: str
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
     :type semaphore: multiprocessing.synchronize.Semaphore
@@ -424,28 +502,30 @@ def level_two(
     &#34;&#34;&#34;
     write_function(wordlist, semaphore, output_dir)
     temp_wordlist = []
-    if not args.leet_case:
+    if args.all or args.leet_case:
         temp_wordlist += helpers.leet_case(wordlist)
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         #clear temp wordlist to save memory
         temp_wordlist.clear()
-    if not args.upper:
+    if args.all or args.upper:
         temp_wordlist += set(helpers.upper_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.sentence:
+    if args.all or args.sentence:
         temp_wordlist += set(helpers.sentence_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
-        temp_wordlist.clear()
-    if not args.toggle:
+        temp_wordlist.clear() 
+    if args.all or args.toggle is not None:
+        if args.all and args.toggle is None:
+            args.toggle = 0
         temp_wordlist += set(helpers.toggle_case(wordlist, index=args.toggle))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.alternating:
+    if args.all or args.alternating:
         temp_wordlist += set(helpers.alternating_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
@@ -458,7 +538,7 @@ def level_two(
 
 # private function for testing purposes
 def _extract_user_input(args, parser, read_function):
-    &#34;&#34;&#34;A private function that reads input words from files and returns apropriate message if files not found.
+    &#34;&#34;&#34;A private function that reads input words from files and returns an appropriate message if files are not found.
 
     :param args: arguments provided by the user
     :type args: &lt;class &#39;__main__.Namespace&#39;&gt;
@@ -489,27 +569,37 @@ def _extract_user_input(args, parser, read_function):
         elif args.input and args.tmpinp:
             cons_words = args.input
             tmp_words = args.tmpinp
+        
+        elif args.input and (args.level == 0 or args.level == 1):
+            cons_words = args.input
+            tmp_words = &#34;&#34;
+
+        elif args.filename and (args.level == 0 or args.level == 1):
+            target_cons_dir = Path(args.filename)
+            cons_words = read_function(target_cons_dir)
+            tmp_words = &#34;&#34;
+
         else:
             parser.exit(
                 1,
-                message=&#34;[!] ERROR: Input words doesn&#39;t provide or the specified directory doesn&#39;t exist.\n&#34;,
+                message=&#34;[!] ERROR: Input constant words or temporary words doesn&#39;t provide.\n&#34;,
             )
     except FileNotFoundError:
         parser.exit(
             1,
-            message=&#34;[!] ERROR: Incorrect specidfied path of input files. Try again!\n&#34;,
+            message=&#34;[!] ERROR: Incorrectly specified path of input files. Try again!\n&#34;,
         )
     except PermissionError:
         parser.exit(
             1,
-            message=&#34;[!] ERROR: Permission denied to specidfied path of input files. Try again!\n&#34;,
+            message=&#34;[!] ERROR: Permission denied to the specified path of input files. Try again!\n&#34;,
         )
     return cons_words, tmp_words
 
 
 # private function for unittesting purposes
 def _extract_pattern(args):
-    &#34;&#34;&#34;A private function that creates a dictionary of patterns which provided by the user.
+    &#34;&#34;&#34;A private function that creates a dictionary of patterns provided by the user.
 
     :param args: arguments provided by the user - example: [&#39;pattern1&#39;, &#39;index1&#39;]
     :type args: &lt;class &#39;__main__.Namespace&#39;&gt;
@@ -529,13 +619,13 @@ def _extract_pattern(args):
 
 # private function for unittesting purposes
 def _calculate_total(tmp_words, len_input, pernumber):
-    &#34;&#34;&#34;A private function that calculates the total number of iteration to use in helpers.printProgressBar function.
+    &#34;&#34;&#34;A private function that calculates the total number of iterations to use in helpers.printProgressBar function.
 
-    :param tmp_words: a list of temporary words which each will be added to constant words to create current word list
+    :param tmp_words: a list of temporary words which each will be added to constant words to create a current word list
     :type tmp_words: list
     :param len_input: length of constant word list
     :type len_input: int
-    :param pernumber: minumum length permutations of elements in the iterable
+    :param pernumber: minimum length permutations of elements in the iterable
     :type pernumber: int
     :returns: an integer that will be passed to helpers.printProgressBar function
     :rtype: int
@@ -548,7 +638,7 @@ def _calculate_total(tmp_words, len_input, pernumber):
 
 # private function for unittesting purposes
 def _checking_permutation_number(len_input, parser):
-    &#34;&#34;&#34;A private function that calculates number of permutation for input words, to notify the user of the high volume of computation
+    &#34;&#34;&#34;A private function that calculates the number of permutations for input words, to notify the user of the high volume of computation
 
     :param len_input: length of constant word list
     :type len_input: int
@@ -567,7 +657,7 @@ def _checking_permutation_number(len_input, parser):
     )
 
 def main(args=None):
-    &#34;&#34;&#34;Main function to generated wordlist
+    &#34;&#34;&#34;Main function to generate a wordlist
 
     :param args: arguments provided by the user - optional
     :type args: &lt;class &#39;__main__.Namespace&#39;&gt;
@@ -605,26 +695,25 @@ def main(args=None):
         pass
     
     try:
-        if args.level != 0:
+        if args.level == 0:
+                wordlist, output_print = level_zero(args, cons_words)
+                write_function(wordlist, semaphore, output_dir)
+                word_counter = len(wordlist)
+
+        elif args.level == 1:
+                wordlist, word_counter = level_one(cons_words, tmp_words, args.numbers, args.chars)
+                write_function(wordlist, semaphore, output_dir)
+        
+        else:
             print_bar(iteration_number, total, length=50)
 
-        for item in tmp_words:
-            #each time initialize a list of words from constant list and one item from temporary list
-            current_words = [item]
-            current_words += cons_words
-
-            # checking for levels
-            if args.level == 0:
-                words, output_print = level_zero(args, current_words)
-                write_function(words, semaphore, output_dir)
-                print(f&#34;These opertations have been done:\n&#34;)
-                for item in output_print:
-                    print(f&#34;-{item}\n&#34;)
-
-            else:
+            for item in tmp_words:
+                #each time initialize a list of words from the constant list and one item from the temporary list
+                current_words = [item]
+                current_words += cons_words
                 # checking for high number of permutations
-               if len_input &gt;= 12:
-                _checking_permutation_number(len_input, parser)
+                if len_input+1 &gt;= 12:
+                    _checking_permutation_number(len_input, parser)
                 #calculate permutation without multiprocessing
                 if not args.process:
                     for i in range(args.pernumber, len_input + 2):
@@ -640,13 +729,14 @@ def main(args=None):
                             word_counter,
                         )
 
-                        if args.level == 1:
+                        if args.level == 2:
                             write_function(wordlist, semaphore, output_dir)
 
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
-                        if args.level == 2:
-                            word_counter = level_two(
+                            
+                        if args.level == 3:
+                            word_counter = level_three(
                                 wordlist,
                                 args,
                                 output_dir,
@@ -656,7 +746,7 @@ def main(args=None):
                             )
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
-                else:
+                if args.process:
                     starmap_iterable = [
                         (current_words, i) for i in range(args.pernumber, len_input + 2)
                     ]
@@ -681,7 +771,7 @@ def main(args=None):
                                     iteration_number, total, length=50
                                 )
                             if args.level == 2:
-                                word_counter = level_two(
+                                word_counter = level_three(
                                     wordlist,
                                     args,
                                     output_dir,
@@ -699,15 +789,20 @@ def main(args=None):
     except OSError as e:
         if e.errno == ENOSPC:
             print(
-                &#34;[!] ERROR: (End Of Disk Space) There isn&#39;t enough disk space in output directory, please provide another directory for output file.&#34;
+                &#34;[!] ERROR: (End Of Disk Space) There isn&#39;t enough disk space in the output directory, please provide another directory for the output file.&#34;
             )
     except KeyboardInterrupt:
         print(&#34;Keyboard Interrupt occurred!&#34;)
 
-    if args.level != 0:
-        print(
-            f&#34;Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil&#34;
-        )
+    if args.level == 0:
+        print(f&#34;These operations have been done:\n&#34;)
+        for item in output_print:
+            print(f&#34;-{item}\n&#34;)
+
+    
+    print(
+        f&#34;Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil&#34;
+    )
 
 
 if __name__ == &#34;__main__&#34;:
@@ -725,10 +820,10 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">create_wordlist</span></span>(<span>iter, min, max, level, capital, regexp, pattern_dict, word_counter)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get a iterable object and create a wordlist with selected options </p>
-<p>Create wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
-tuples. if specific pattern is provided, it will be added and then pass to helper function (_add_to_wordlist). if
-level selected by the user is 2 and capital switch doesn't disable, capitalized words also are added to wordlist.</p>
+<div class="desc"><p>Get an iterable object and create a wordlist with selected options </p>
+<p>Create a wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
+tuples. if a specific pattern is provided, it will be added and then passed to the private function (_add_to_wordlist). if
+the level selected by the user is 2 and the capital switch doesn't disable, capitalized words also are added to the wordlist.</p>
 <p>:param iter: iterable returns from itertools.permutations
 :type iter: itertools.permutations
 :param min: minimum size of word by char
@@ -743,7 +838,7 @@ level selected by the user is 2 and capital switch doesn't disable, capitalized 
 :type regexp: str
 :param pattern_dict: pattern provided by the user
 :type pattern_dict: dict
-:param word_counter: tracking generated words number
+:param word_counter: tracking generated word number
 :type word_counter: int
 :returns: returns a list of generated words and their number
 :rtype: tuple</p></div>
@@ -752,11 +847,11 @@ level selected by the user is 2 and capital switch doesn't disable, capitalized 
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_counter):
-    &#34;&#34;&#34;Get a iterable object and create a wordlist with selected options 
+    &#34;&#34;&#34;Get an iterable object and create a wordlist with selected options 
     
-    Create wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
-    tuples. if specific pattern is provided, it will be added and then pass to helper function (_add_to_wordlist). if
-    level selected by the user is 2 and capital switch doesn&#39;t disable, capitalized words also are added to wordlist.
+    Create a wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
+    tuples. if a specific pattern is provided, it will be added and then passed to the private function (_add_to_wordlist). if
+    the level selected by the user is 2 and the capital switch doesn&#39;t disable, capitalized words also are added to the wordlist.
 
     :param iter: iterable returns from itertools.permutations
     :type iter: itertools.permutations
@@ -772,7 +867,7 @@ level selected by the user is 2 and capital switch doesn't disable, capitalized 
     :type regexp: str
     :param pattern_dict: pattern provided by the user
     :type pattern_dict: dict
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :returns: returns a list of generated words and their number
     :rtype: tuple
@@ -785,7 +880,7 @@ level selected by the user is 2 and capital switch doesn't disable, capitalized 
 
         word_counter = _add_to_wordlist(wordlist, word, min, max, regexp, word_counter)
         #apply capitalize operation in level 2
-        if level == 2 and not capital:
+        if level == 2 and capital:
             cap_word = &#34;&#34;.join(helpers.capitalize(item))
             if pattern_dict:
                 cap_word = _add_pattern(cap_word, pattern_dict)
@@ -797,12 +892,91 @@ level selected by the user is 2 and capital switch doesn't disable, capitalized 
     return wordlist, word_counter</code></pre>
 </details>
 </dd>
-<dt id="drowtsil.level_two"><code class="name flex">
-<span>def <span class="ident">level_two</span></span>(<span>wordlist, args, output_dir, word_counter, semaphore, write_function)</span>
+<dt id="drowtsil.level_one"><code class="name flex">
+<span>def <span class="ident">level_one</span></span>(<span>constant_words, temporary_words, numbers, chars)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It performs when user's selected level is 2. get a list of words and arguments provided by the user and apply selected functions on
-every item of wordlist.</p>
+<div class="desc"><p>It performs when the user's selected level is 1. Get a list of URLs or other texts and add consecutive numbers or letters or
+items of temporary_words at the end.</p>
+<p>:param constant_words: a list of constant words
+:type constant_words: list
+:param temporary_words: a list of temporary words
+:type temporary_words: list
+:param numbers: limit for consecutive numbers - also enable this feature
+:type numbers: int
+:param chars: enable adding consecutive characters
+:type chars: bool
+:returns: a tuple contains a list of transformed words and the length of the wordlist
+:rtype: tuple</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def level_one(constant_words, temporary_words, numbers, chars):
+    &#34;&#34;&#34;It performs when the user&#39;s selected level is 1. Get a list of URLs or other texts and add consecutive numbers or letters or
+    items of temporary_words at the end.
+    
+    :param constant_words: a list of constant words
+    :type constant_words: list
+    :param temporary_words: a list of temporary words
+    :type temporary_words: list
+    :param numbers: limit for consecutive numbers - also enable this feature
+    :type numbers: int
+    :param chars: enable adding consecutive characters
+    :type chars: bool
+    :returns: a tuple contains a list of transformed words and the length of the wordlist 
+    :rtype: tuple
+    &#34;&#34;&#34;
+    wordlist = []
+    urls = _is_url(constant_words)
+    # if input list contains urls
+    if urls:
+        for url in urls:
+            if numbers:
+                for i in range(numbers):
+                    try:
+                        new_url = &#34;&#34;.join(url[0]+str(i)+url[1])
+                    except IndexError:
+                        new_url = &#34;&#34;.join(url[0]+str(i))
+                    wordlist.append(new_url)
+            if temporary_words != &#34;&#34;:
+                for tmp_item in temporary_words:
+                    try:
+                        new_url = &#34;&#34;.join(url[0]+str(tmp_item)+url[1])
+                    except IndexError:
+                        new_url = &#34;&#34;.join(url[0]+str(tmp_item))
+                    wordlist.append(new_url)
+            if chars:
+                for char_item in helpers.characters:
+                    try:
+                        new_url = &#34;&#34;.join(url[0]+str(char_item)+url[1])
+                    except IndexError:
+                        new_url = &#34;&#34;.join(url[0]+str(char_item))
+                    wordlist.append(new_url)
+    # if input list does not contain urls.
+    else:
+        if numbers:
+            for i in range(numbers):
+                for item in constant_words:
+                    wordlist.append(item + str(i))
+        if temporary_words != &#34;&#34;:
+            for tmp_item in temporary_words:
+                for item in constant_words:
+                    wordlist.append(item + tmp_item)
+        if chars:
+            for char_item in helpers.characters:
+                for item in constant_words:
+                    wordlist.append(item + char_item)
+                    
+    return wordlist, len(wordlist)</code></pre>
+</details>
+</dd>
+<dt id="drowtsil.level_three"><code class="name flex">
+<span>def <span class="ident">level_three</span></span>(<span>wordlist, args, output_dir, word_counter, semaphore, write_function)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It performs when the user's selected level is 2. Get a list of words and arguments provided by the user and apply selected functions on
+every item of the wordlist.</p>
 <p>list of functions:
 -upper case
 -sentence case
@@ -814,9 +988,9 @@ every item of wordlist.</p>
 :type wordlist: list
 :param args: arguments provided by the user
 :type args: <class '__main__.Namespace'>
-:param output_dir: path to output directory
+:param output_dir: path to the output directory
 :type output_dir: str
-:param word_counter: tracking generated words number
+:param word_counter: tracking generated word number
 :type word_counter: int
 :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
 :type semaphore: multiprocessing.synchronize.Semaphore
@@ -828,7 +1002,7 @@ every item of wordlist.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def level_two(
+<pre><code class="python">def level_three(
     wordlist,
     args,
     output_dir,
@@ -836,8 +1010,8 @@ every item of wordlist.</p>
     semaphore,
     write_function,
 ):
-    &#34;&#34;&#34;It performs when user&#39;s selected level is 2. get a list of words and arguments provided by the user and apply selected functions on
-      every item of wordlist.
+    &#34;&#34;&#34;It performs when the user&#39;s selected level is 2. Get a list of words and arguments provided by the user and apply selected functions on
+      every item of the wordlist.
 
       list of functions: 
       -upper case
@@ -851,9 +1025,9 @@ every item of wordlist.</p>
     :type wordlist: list
     :param args: arguments provided by the user
     :type args: &lt;class &#39;__main__.Namespace&#39;&gt;
-    :param output_dir: path to output directory
+    :param output_dir: path to the output directory
     :type output_dir: str
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
     :type semaphore: multiprocessing.synchronize.Semaphore
@@ -864,28 +1038,30 @@ every item of wordlist.</p>
     &#34;&#34;&#34;
     write_function(wordlist, semaphore, output_dir)
     temp_wordlist = []
-    if not args.leet_case:
+    if args.all or args.leet_case:
         temp_wordlist += helpers.leet_case(wordlist)
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         #clear temp wordlist to save memory
         temp_wordlist.clear()
-    if not args.upper:
+    if args.all or args.upper:
         temp_wordlist += set(helpers.upper_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.sentence:
+    if args.all or args.sentence:
         temp_wordlist += set(helpers.sentence_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
-        temp_wordlist.clear()
-    if not args.toggle:
+        temp_wordlist.clear() 
+    if args.all or args.toggle is not None:
+        if args.all and args.toggle is None:
+            args.toggle = 0
         temp_wordlist += set(helpers.toggle_case(wordlist, index=args.toggle))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
         temp_wordlist.clear()
-    if not args.alternating:
+    if args.all or args.alternating:
         temp_wordlist += set(helpers.alternating_case(wordlist))
         write_function(temp_wordlist, semaphore, output_dir)
         word_counter += len(temp_wordlist)
@@ -900,7 +1076,7 @@ every item of wordlist.</p>
 <span>def <span class="ident">level_zero</span></span>(<span>args, current_words)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It performs when user's selected level is 0. get a list of words and arguments provided by the user and apply selected functions on
+<div class="desc"><p>It performs when the user's selected level is 0. Get a list of words and arguments provided by the user and apply selected functions on
 all items.</p>
 <p>list of functions:
 -upper case
@@ -922,7 +1098,7 @@ all items.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def level_zero(args, current_words):
-    &#34;&#34;&#34;It performs when user&#39;s selected level is 0. get a list of words and arguments provided by the user and apply selected functions on
+    &#34;&#34;&#34;It performs when the user&#39;s selected level is 0. Get a list of words and arguments provided by the user and apply selected functions on
       all items.
 
     list of functions: 
@@ -951,6 +1127,8 @@ all items.</p>
         words += helpers.lower_case(current_words)
         output_print.append(&#34;lower case&#34;)
     if args.all or args.toggle is not None:
+        if args.all and args.toggle is None:
+            args.toggle = 0
         words += helpers.toggle_case(current_words, args.toggle)
         output_print.append(&#34;toggle case&#34;)
     if args.all or args.swap:
@@ -975,7 +1153,7 @@ all items.</p>
 <span>def <span class="ident">main</span></span>(<span>args=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Main function to generated wordlist</p>
+<div class="desc"><p>Main function to generate a wordlist</p>
 <p>:param args: arguments provided by the user - optional
 :type args: <class '__main__.Namespace'>
 :returns: None
@@ -985,7 +1163,7 @@ all items.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def main(args=None):
-    &#34;&#34;&#34;Main function to generated wordlist
+    &#34;&#34;&#34;Main function to generate a wordlist
 
     :param args: arguments provided by the user - optional
     :type args: &lt;class &#39;__main__.Namespace&#39;&gt;
@@ -1023,26 +1201,25 @@ all items.</p>
         pass
     
     try:
-        if args.level != 0:
+        if args.level == 0:
+                wordlist, output_print = level_zero(args, cons_words)
+                write_function(wordlist, semaphore, output_dir)
+                word_counter = len(wordlist)
+
+        elif args.level == 1:
+                wordlist, word_counter = level_one(cons_words, tmp_words, args.numbers, args.chars)
+                write_function(wordlist, semaphore, output_dir)
+        
+        else:
             print_bar(iteration_number, total, length=50)
 
-        for item in tmp_words:
-            #each time initialize a list of words from constant list and one item from temporary list
-            current_words = [item]
-            current_words += cons_words
-
-            # checking for levels
-            if args.level == 0:
-                words, output_print = level_zero(args, current_words)
-                write_function(words, semaphore, output_dir)
-                print(f&#34;These opertations have been done:\n&#34;)
-                for item in output_print:
-                    print(f&#34;-{item}\n&#34;)
-
-            else:
+            for item in tmp_words:
+                #each time initialize a list of words from the constant list and one item from the temporary list
+                current_words = [item]
+                current_words += cons_words
                 # checking for high number of permutations
-               if len_input &gt;= 12:
-                _checking_permutation_number(len_input, parser)
+                if len_input+1 &gt;= 12:
+                    _checking_permutation_number(len_input, parser)
                 #calculate permutation without multiprocessing
                 if not args.process:
                     for i in range(args.pernumber, len_input + 2):
@@ -1058,13 +1235,14 @@ all items.</p>
                             word_counter,
                         )
 
-                        if args.level == 1:
+                        if args.level == 2:
                             write_function(wordlist, semaphore, output_dir)
 
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
-                        if args.level == 2:
-                            word_counter = level_two(
+                            
+                        if args.level == 3:
+                            word_counter = level_three(
                                 wordlist,
                                 args,
                                 output_dir,
@@ -1074,7 +1252,7 @@ all items.</p>
                             )
                             iteration_number += 1
                             helpers.printProgressBar(iteration_number, total, length=50)
-                else:
+                if args.process:
                     starmap_iterable = [
                         (current_words, i) for i in range(args.pernumber, len_input + 2)
                     ]
@@ -1099,7 +1277,7 @@ all items.</p>
                                     iteration_number, total, length=50
                                 )
                             if args.level == 2:
-                                word_counter = level_two(
+                                word_counter = level_three(
                                     wordlist,
                                     args,
                                     output_dir,
@@ -1117,15 +1295,20 @@ all items.</p>
     except OSError as e:
         if e.errno == ENOSPC:
             print(
-                &#34;[!] ERROR: (End Of Disk Space) There isn&#39;t enough disk space in output directory, please provide another directory for output file.&#34;
+                &#34;[!] ERROR: (End Of Disk Space) There isn&#39;t enough disk space in the output directory, please provide another directory for the output file.&#34;
             )
     except KeyboardInterrupt:
         print(&#34;Keyboard Interrupt occurred!&#34;)
 
-    if args.level != 0:
-        print(
-            f&#34;Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil&#34;
-        )</code></pre>
+    if args.level == 0:
+        print(f&#34;These operations have been done:\n&#34;)
+        for item in output_print:
+            print(f&#34;-{item}\n&#34;)
+
+    
+    print(
+        f&#34;Wordlist with {word_counter} words created in: {default_timer() - start_time :.2f} seconds with Drowtsil&#34;
+    )</code></pre>
 </details>
 </dd>
 </dl>
@@ -1142,7 +1325,8 @@ all items.</p>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="drowtsil.create_wordlist" href="#drowtsil.create_wordlist">create_wordlist</a></code></li>
-<li><code><a title="drowtsil.level_two" href="#drowtsil.level_two">level_two</a></code></li>
+<li><code><a title="drowtsil.level_one" href="#drowtsil.level_one">level_one</a></code></li>
+<li><code><a title="drowtsil.level_three" href="#drowtsil.level_three">level_three</a></code></li>
 <li><code><a title="drowtsil.level_zero" href="#drowtsil.level_zero">level_zero</a></code></li>
 <li><code><a title="drowtsil.main" href="#drowtsil.main">main</a></code></li>
 </ul>

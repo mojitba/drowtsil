@@ -1,14 +1,14 @@
 """Helpers module contains functions that used to transform words and write generated wordlist to file
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes
 
 Usage:
     python drowtsil.py -h
 
 Author:
     Mojtaba Hemmati
-    github.com/mojitba 3/13/2024
+    github.com/mojitba 3/21/2024
 
 License:
 This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,11 @@ substitutions = {
 characters = ['a', 'b', 'c', 'd', 'e' ,'f' ,'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'u', 'w', 'x', 'y', 'z']
 
 def alternating_case(input_list):
-    """Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.
+    """Transform every item from the input list to alternating case. In this form text alternates between lowercase and upper case.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of alternating version of input items
+    :returns: a list of alternating versions of input items
     :rtype: list
     """
     alternating_list = []
@@ -65,22 +65,22 @@ def alternating_case(input_list):
 
 
 def capitalize(input_list):
-    """Capitalize case of every item from input list.
+    """Capitalize the case of every item from the input list.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of capitalized version of input items
+    :returns: a list of capitalized versions of input items
     :rtype: list
     """
     return [item.capitalize() for item in input_list]
 
 
 def _check_input(input_item):
-    """cheks if input is a string litteraly or an integer as a string.
+    """checks if input is a string literally or an integer as a string.
 
     :param input_item: input item
     :type input_item: str
-    :returns: True if input is a string and False if not.
+    :returns: True if the input is a string and False if not.
     :rtype: bool
     """
     try:
@@ -91,11 +91,11 @@ def _check_input(input_item):
 
 
 def lower_case(input_list):
-    """Transforms every item from input list to lower case.
+    """Transforms every item from the input list to lowercase.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of lower case version of input items
+    :returns: a list of lowercase versions of input items
     :rtype: list
     """
     return [item.lower() for item in input_list]
@@ -115,32 +115,32 @@ def read_from_file(file_path):
 
 
 def reverse(input_list):
-    """Reverse every item from input.
+    """Reverse every item from the input.
 
     :param input_word: list provided by the user
     :type input_word: str
-    :returns: reverse version of input word
+    :returns: reverse versions of input word
     :rtype: str
     """
     return [item[::-1] for item in input_list]
 
 
 def swap_case(input_list):
-    """Transforms every item from input list to swap case (upper to lower and vice versa).
+    """Transforms every item from the input list to swap case (upper to lower and vice versa).
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of swap case version of input items
+    :returns: a list of swap case versions of input items
     :rtype: list
     """
     return [item.swapcase() for item in input_list]
 
 
 def sentence_case(input_list):
-    """Transform every item from input list to sentence case.
+    """Transform every item from the input list to sentence case.
     
-    It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
-    example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisalsoatext']
+    It works by capitalizing the very first letter in each sentence and then transforming the rest of the text
+    into lowercase. example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisalsoatext']
 
     :param input_list: wordlist provided by the user
     :type input_list: list
@@ -157,9 +157,9 @@ def sentence_case(input_list):
 
 
 def leet_case(input_list):
-    """Transforms every item from input list to leet case(1337). 
+    """Transforms every item from the input list to leet case(1337). 
     
-    It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+    It uses a substitution dictionary to substitute a to @, s to $, etc.
     example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y"]
 
     :param input_list: wordlist provided by the user
@@ -183,16 +183,16 @@ def leet_case(input_list):
 
 
 def toggle_case(input_list, index):
-    """Transforms every item from input to toggle case with specified index. 
+    """Transforms every item from input to toggle case with the specified  index. 
     
-    in toggle case each word begins in lower case and the rest in upper case. 
+    in toggle case, each word begins in lower case and the rest in upper case. 
     example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :param index: index of string which Transforms to lower case
+    :param index: index of string which Transforms to lowercase
     :type index: int
-    :returns: a list of toggle case version of input items
+    :returns: a list of toggle case versions of input items
     :rtype: list
     """
     output_list = []
@@ -215,7 +215,7 @@ def upper_case(input_list):
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of upper case version of input items
+    :returns: a list of upper case versions of input items
     :rtype: list
     """
     return [item.upper() for item in input_list]
@@ -228,7 +228,7 @@ def write_to_file(wordlist, semaphore, file_path):
     :type wordlist: list
     :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
     :type semaphore: multiprocessing.synchronize.Semaphore
-    :param file_path: location of output file
+    :param file_path: location of the output file
     :type file_path: str
     :returns: None
     :rtype: None
@@ -250,7 +250,7 @@ def printProgressBar(
     fill="█",
     printEnd="\r",
 ):
-    """Call in a loop to create terminal progress bar.
+    """Call in a loop to create a terminal progress bar.
     :param iteration: current iteration (Required)
     :type iteration: int
     :param total: total iterations (Required)

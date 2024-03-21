@@ -1,16 +1,16 @@
-"""This script allows the user to create wordlist for targeted subject. Use only for educational or security audit purposes.
+"""This script allows the user to create wordlist for targeted subject. Use only for security audit, penetration testing and education purposes.
 
 This tool accepts two list in form of text file (.txt) or from command line and returns a wordlist in (.txt) format.
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes
 
 Usage:
     python drowtsil.py -h
 
 Author:
     Mojtaba Hemmati
-    github.com/mojitba 3/13/2024
+    github.com/moji1tba 3/21/2024
 
 License:
 This program is free software; you can redistribute it and/or modify
@@ -61,9 +61,9 @@ logo = """
 def _create_parser(process_number_default):
     """Create and return a parser (argparse.ArgumentParser instance) for main() function.
 
-    :param process_number_default: default value for the number of process (compute with multiprocessing.cpu_count())
+    :param process_number_default: default value for the number of processes (compute with multiprocessing.cpu_count())
     :type input_list: int
-    :returns: an instance from argparse.ArgumentParser class contains switchs with their values.
+    :returns: an instance from argparse.ArgumentParser class contains switches with their values.
     :rtype: <class 'argparse.ArgumentParser'>
     """
 
@@ -82,7 +82,7 @@ def _create_parser(process_number_default):
         type=str,
         nargs="+",
         default=None,
-        help="List of temporary input words, every time each one\n\t selected and add to constant words list",
+        help="List of temporary input words, every time each one is\n\t selected and added to constant words list",
     )
     parser.add_argument(
         "-f", "--filename", type=str, help="Path to constant Wordlist file"
@@ -92,7 +92,7 @@ def _create_parser(process_number_default):
         "--tmpfile",
         type=str,
         default=None,
-        help="Path to temporary Wordlist file, every time each one selected\n\t and add to constant words list",
+        help="Path to temporary Wordlist file, every time each one selected\n\t and added to constant words list",
     )
     parser.add_argument(
         "-o",
@@ -116,7 +116,7 @@ def _create_parser(process_number_default):
         type=str,
         nargs="+",
         default=None,
-        help='Pattern of words, Enter like "pattern" "index". Example: 0 for first and 1000 for end of word or other indexes',
+        help='Pattern of words, Enter like "pattern" "index". Example: 0 for first and 1000 for the end of word or other indexes',
     )
     parser.add_argument(
         "-r", "--regex", type=str, default=None, help="Regex to match words"
@@ -126,7 +126,7 @@ def _create_parser(process_number_default):
         "--pernumber",
         type=int,
         default=2,
-        help="Minimum number of words to generate permutations like start with 2 word permutation (default is 2)",
+        help="Minimum number of words to generate permutations like start with 2-word permutation (default is 2)",
     )
     parser.add_argument(
         "-ps",
@@ -135,13 +135,13 @@ def _create_parser(process_number_default):
         nargs="?",
         const=process_number_default,
         default=None,
-        help="Number of processes in pool (default is number of logical cores - 1)",
+        help="Number of processes in the pool (default is number of logical cores - 1)",
     )
     parser.add_argument(
-        "-max", type=int, default=63, help="Maximum lenght of preshared key (default is 63)"
+        "-max", type=int, default=63, help="Maximum length of the preshared key (default is 63)"
     )
     parser.add_argument(
-        "-min", type=int, default=8, help="Minimum lenght of preshared key (default is 8)"
+        "-min", type=int, default=8, help="Minimum length of the preshared key (default is 8)"
     )
     #operations options
     parser.add_argument(
@@ -157,7 +157,7 @@ def _create_parser(process_number_default):
         "-lt",
         "--leet_case",
         action="store_true",
-        help="Enable leet case function, replce 'a' with '@', 's' with '$' and etc",
+        help="Enable leet case function, replace 'a' with '@', 's' with '$' and etc",
     )
     parser.add_argument(
         "-t",
@@ -181,26 +181,26 @@ def _create_parser(process_number_default):
         "-a",
         "--alternating",
         action="store_true",
-        help="transform text into form that alternates between lowercase and upper case",
+        help="transform text into the form that alternates between lowercase and uppercase",
     )
     parser.add_argument(
-        "-all", action="store_true", help="Apply all text transform functions in level 0 and 2"
+        "-all", action="store_true", help="Apply all text transform functions in levels 0 and 3"
     )
     parser.add_argument(
-        "-n","--numbers", type=int, default=0, help="Add numbers at the end of strings in level"
+        "-n","--numbers", type=int, default=0, help="Add consecutive numbers at the end of strings in level 1"
     )
     parser.add_argument(
-        "-ch","--chars", action="store_true", help="Add characters at the end of strings in level"
+        "-ch","--chars", action="store_true", help="Add consecutive characters at the end of strings in level 1"
     )
     return parser
 
 
 def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_counter):
-    """Get a iterable object and create a wordlist with selected options 
+    """Get an iterable object and create a wordlist with selected options 
     
-    Create wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
-    tuples. if specific pattern is provided, it will be added and then pass to helper function (_add_to_wordlist). if
-    level selected by the user is 2 and capital switch doesn't disable, capitalized words also are added to wordlist.
+    Create a wordlist by joining items from iterators in one string. every iterator contains a list of all permutations
+    tuples. if a specific pattern is provided, it will be added and then passed to the private function (_add_to_wordlist). if
+    the level selected by the user is 2 and the capital switch doesn't disable, capitalized words also are added to the wordlist.
 
     :param iter: iterable returns from itertools.permutations
     :type iter: itertools.permutations
@@ -216,7 +216,7 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
     :type regexp: str
     :param pattern_dict: pattern provided by the user
     :type pattern_dict: dict
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :returns: returns a list of generated words and their number
     :rtype: tuple
@@ -241,13 +241,13 @@ def create_wordlist(iter, min, max, level, capital, regexp, pattern_dict, word_c
     return wordlist, word_counter
 
 def _add_pattern(word, pattern_dict):
-    """Add pattern which provided by the user to specified index of word
+    """Add the pattern provided by the user to the specified index of the word
 
-    :param word: a word from wordlist
+    :param word: a word from the wordlist
     :type word: str
     :param pattern_dict: a dictionary of pattern  in shape {index:"pattern"} (index 0 for first of word, 1000 for end of word)
     :type pattern_dict: dict
-    :returns: a word with appended pattern
+    :returns: a word with an appended pattern
     :rtype: str
     """
     for i in pattern_dict.keys():
@@ -261,11 +261,11 @@ def _add_pattern(word, pattern_dict):
 
 
 def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
-    """A private function that adds a word to wordlist.
+    """A private function that adds a word to the wordlist.
 
     :param wordlist: an empty list for adding words 
     :type wordlist: list
-    :param word: generated word that is going to add to wordlist
+    :param word: generated word that is going to be added to the wordlist
     :type word: str
     :param min: minimum size of word by char
     :type min: int
@@ -273,7 +273,7 @@ def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
     :type max: int
     :param regexp: regex pattern to match
     :type regexp: str
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :returns: returns number of generated words
     :rtype: int
@@ -292,7 +292,7 @@ def _add_to_wordlist(wordlist, word, min, max, regexp, word_counter):
 
 
 def level_zero(args, current_words):
-    """It performs when user's selected level is 0. get a list of words and arguments provided by the user and apply selected functions on
+    """It performs when the user's selected level is 0. Get a list of words and arguments provided by the user and apply selected functions on
       all items.
 
     list of functions: 
@@ -343,9 +343,23 @@ def level_zero(args, current_words):
     return set(words), output_print
 
 def level_one(constant_words, temporary_words, numbers, chars):
+    """It performs when the user's selected level is 1. Get a list of URLs or other texts and add consecutive numbers or letters or
+    items of temporary_words at the end.
+    
+    :param constant_words: a list of constant words
+    :type constant_words: list
+    :param temporary_words: a list of temporary words
+    :type temporary_words: list
+    :param numbers: limit for consecutive numbers - also enable this feature
+    :type numbers: int
+    :param chars: enable adding consecutive characters
+    :type chars: bool
+    :returns: a tuple contains a list of transformed words and the length of the wordlist 
+    :rtype: tuple
+    """
     wordlist = []
     urls = _is_url(constant_words)
-
+    # if input list contains urls
     if urls:
         for url in urls:
             if numbers:
@@ -369,7 +383,7 @@ def level_one(constant_words, temporary_words, numbers, chars):
                     except IndexError:
                         new_url = "".join(url[0]+str(char_item))
                     wordlist.append(new_url)
-
+    # if input list does not contain urls.
     else:
         if numbers:
             for i in range(numbers):
@@ -388,9 +402,20 @@ def level_one(constant_words, temporary_words, numbers, chars):
 
 
 def _is_url(input_list):
+    """It's a private function for checking if the list contains URLs or not.
+    
+    :param input_list: list of strings
+    :type input_list: list
+    :returns: a list of lists containing URLs and their suffixes.
+    :rtype: list
+    """
     urls = [re.findall('(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-&?=%.]+', item) for item in input_list]
-    split_urls =[re.split(r"([.]{1}[a-zA-Z]+$)", item[0]) for item in urls ]
-    return split_urls
+    try:
+        result =[re.split(r"([.]{1}[a-zA-Z]+$)", item[0]) for item in urls ]
+    except IndexError:
+        result = []
+
+    return result
 
 def level_three(
     wordlist,
@@ -400,8 +425,8 @@ def level_three(
     semaphore,
     write_function,
 ):
-    """It performs when user's selected level is 2. get a list of words and arguments provided by the user and apply selected functions on
-      every item of wordlist.
+    """It performs when the user's selected level is 2. Get a list of words and arguments provided by the user and apply selected functions on
+      every item of the wordlist.
 
       list of functions: 
       -upper case
@@ -415,9 +440,9 @@ def level_three(
     :type wordlist: list
     :param args: arguments provided by the user
     :type args: <class '__main__.Namespace'>
-    :param output_dir: path to output directory
+    :param output_dir: path to the output directory
     :type output_dir: str
-    :param word_counter: tracking generated words number
+    :param word_counter: tracking generated word number
     :type word_counter: int
     :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
     :type semaphore: multiprocessing.synchronize.Semaphore
@@ -464,7 +489,7 @@ def level_three(
 
 # private function for testing purposes
 def _extract_user_input(args, parser, read_function):
-    """A private function that reads input words from files and returns apropriate message if files not found.
+    """A private function that reads input words from files and returns an appropriate message if files are not found.
 
     :param args: arguments provided by the user
     :type args: <class '__main__.Namespace'>
@@ -513,19 +538,19 @@ def _extract_user_input(args, parser, read_function):
     except FileNotFoundError:
         parser.exit(
             1,
-            message="[!] ERROR: Incorrect specidfied path of input files. Try again!\n",
+            message="[!] ERROR: Incorrectly specified path of input files. Try again!\n",
         )
     except PermissionError:
         parser.exit(
             1,
-            message="[!] ERROR: Permission denied to specidfied path of input files. Try again!\n",
+            message="[!] ERROR: Permission denied to the specified path of input files. Try again!\n",
         )
     return cons_words, tmp_words
 
 
 # private function for unittesting purposes
 def _extract_pattern(args):
-    """A private function that creates a dictionary of patterns which provided by the user.
+    """A private function that creates a dictionary of patterns provided by the user.
 
     :param args: arguments provided by the user - example: ['pattern1', 'index1']
     :type args: <class '__main__.Namespace'>
@@ -545,13 +570,13 @@ def _extract_pattern(args):
 
 # private function for unittesting purposes
 def _calculate_total(tmp_words, len_input, pernumber):
-    """A private function that calculates the total number of iteration to use in helpers.printProgressBar function.
+    """A private function that calculates the total number of iterations to use in helpers.printProgressBar function.
 
-    :param tmp_words: a list of temporary words which each will be added to constant words to create current word list
+    :param tmp_words: a list of temporary words which each will be added to constant words to create a current word list
     :type tmp_words: list
     :param len_input: length of constant word list
     :type len_input: int
-    :param pernumber: minumum length permutations of elements in the iterable
+    :param pernumber: minimum length permutations of elements in the iterable
     :type pernumber: int
     :returns: an integer that will be passed to helpers.printProgressBar function
     :rtype: int
@@ -564,7 +589,7 @@ def _calculate_total(tmp_words, len_input, pernumber):
 
 # private function for unittesting purposes
 def _checking_permutation_number(len_input, parser):
-    """A private function that calculates number of permutation for input words, to notify the user of the high volume of computation
+    """A private function that calculates the number of permutations for input words, to notify the user of the high volume of computation
 
     :param len_input: length of constant word list
     :type len_input: int
@@ -583,7 +608,7 @@ def _checking_permutation_number(len_input, parser):
     )
 
 def main(args=None):
-    """Main function to generated wordlist
+    """Main function to generate a wordlist
 
     :param args: arguments provided by the user - optional
     :type args: <class '__main__.Namespace'>
@@ -634,7 +659,7 @@ def main(args=None):
             print_bar(iteration_number, total, length=50)
 
             for item in tmp_words:
-                #each time initialize a list of words from constant list and one item from temporary list
+                #each time initialize a list of words from the constant list and one item from the temporary list
                 current_words = [item]
                 current_words += cons_words
                 # checking for high number of permutations
@@ -715,13 +740,13 @@ def main(args=None):
     except OSError as e:
         if e.errno == ENOSPC:
             print(
-                "[!] ERROR: (End Of Disk Space) There isn't enough disk space in output directory, please provide another directory for output file."
+                "[!] ERROR: (End Of Disk Space) There isn't enough disk space in the output directory, please provide another directory for the output file."
             )
     except KeyboardInterrupt:
         print("Keyboard Interrupt occurred!")
 
     if args.level == 0:
-        print(f"These opertations have been done:\n")
+        print(f"These operations have been done:\n")
         for item in output_print:
             print(f"-{item}\n")
 

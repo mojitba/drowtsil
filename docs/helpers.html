@@ -24,12 +24,12 @@
 <section id="section-intro">
 <p>Helpers module contains functions that used to transform words and write generated wordlist to file</p>
 <h2 id="program">Program</h2>
-<p>Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.</p>
+<p>Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes</p>
 <h2 id="usage">Usage</h2>
 <p>python drowtsil.py -h</p>
 <h2 id="author">Author</h2>
 <p>Mojtaba Hemmati
-github.com/mojitba 3/13/2024</p>
+github.com/mojitba 3/21/2024</p>
 <p>License:
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -50,18 +50,17 @@ USA</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">#!/usr/bin/env python3
-&#34;&#34;&#34;Helpers module contains functions that used to transform words and write generated wordlist to file
+<pre><code class="python">&#34;&#34;&#34;Helpers module contains functions that used to transform words and write generated wordlist to file
 
 Program:
-    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for ethical penetration testing and educational purposes.
+    Drowtsil(reverse of word list)-v1.0 - Another wordlist generator for penetration testing and education purposes
 
 Usage:
     python drowtsil.py -h
 
 Author:
     Mojtaba Hemmati
-    github.com/mojitba 3/13/2024
+    github.com/mojitba 3/21/2024
 
 License:
 This program is free software; you can redistribute it and/or modify
@@ -81,6 +80,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 See &#39;LICENSE&#39; for more information.
 
 &#34;&#34;&#34;
+# for leet code transformation
 substitutions = {
     &#34;a&#34;: &#34;@&#34;,
     &#34;s&#34;: &#34;$&#34;,
@@ -91,14 +91,15 @@ substitutions = {
     &#34;e&#34;: &#34;3&#34;,
     &#34;z&#34;: &#34;2&#34;,
 }
-
+#for level one transformation
+characters = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39; ,&#39;f&#39; ,&#39;g&#39;, &#39;h&#39;, &#39;i&#39;, &#39;j&#39;, &#39;k&#39;, &#39;l&#39;, &#39;m&#39;, &#39;n&#39;, &#39;o&#39;, &#39;p&#39;, &#39;q&#39;, &#39;r&#39;, &#39;s&#39;, &#39;t&#39;, &#39;v&#39;, &#39;u&#39;, &#39;w&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;]
 
 def alternating_case(input_list):
-    &#34;&#34;&#34;Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.
+    &#34;&#34;&#34;Transform every item from the input list to alternating case. In this form text alternates between lowercase and upper case.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of alternating version of input items
+    :returns: a list of alternating versions of input items
     :rtype: list
     &#34;&#34;&#34;
     alternating_list = []
@@ -116,22 +117,22 @@ def alternating_case(input_list):
 
 
 def capitalize(input_list):
-    &#34;&#34;&#34;Capitalize case of every item from input list.
+    &#34;&#34;&#34;Capitalize the case of every item from the input list.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of capitalized version of input items
+    :returns: a list of capitalized versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.capitalize() for item in input_list]
 
 
 def _check_input(input_item):
-    &#34;&#34;&#34;cheks if input is a string litteraly or an integer as a string.
+    &#34;&#34;&#34;checks if input is a string literally or an integer as a string.
 
     :param input_item: input item
     :type input_item: str
-    :returns: True if input is a string and False if not.
+    :returns: True if the input is a string and False if not.
     :rtype: bool
     &#34;&#34;&#34;
     try:
@@ -142,11 +143,11 @@ def _check_input(input_item):
 
 
 def lower_case(input_list):
-    &#34;&#34;&#34;Transforms every item from input list to lower case.
+    &#34;&#34;&#34;Transforms every item from the input list to lowercase.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of lower case version of input items
+    :returns: a list of lowercase versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.lower() for item in input_list]
@@ -166,32 +167,32 @@ def read_from_file(file_path):
 
 
 def reverse(input_list):
-    &#34;&#34;&#34;Reverse every item from input.
+    &#34;&#34;&#34;Reverse every item from the input.
 
     :param input_word: list provided by the user
     :type input_word: str
-    :returns: reverse version of input word
+    :returns: reverse versions of input word
     :rtype: str
     &#34;&#34;&#34;
     return [item[::-1] for item in input_list]
 
 
 def swap_case(input_list):
-    &#34;&#34;&#34;Transforms every item from input list to swap case (upper to lower and vice versa).
+    &#34;&#34;&#34;Transforms every item from the input list to swap case (upper to lower and vice versa).
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of swap case version of input items
+    :returns: a list of swap case versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.swapcase() for item in input_list]
 
 
 def sentence_case(input_list):
-    &#34;&#34;&#34;Transform every item from input list to sentence case.
+    &#34;&#34;&#34;Transform every item from the input list to sentence case.
     
-    It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
-    example: [&#34;thisistext&#34;, &#34;tHisIsALSOateXt&#34;] Transforms to [&#39;Thisistext&#39;, &#39;Thisisalsoatext&#39;]
+    It works by capitalizing the very first letter in each sentence and then transforming the rest of the text
+    into lowercase. example: [&#34;thisistext&#34;, &#34;tHisIsALSOateXt&#34;] Transforms to [&#39;Thisistext&#39;, &#39;Thisisalsoatext&#39;]
 
     :param input_list: wordlist provided by the user
     :type input_list: list
@@ -208,9 +209,9 @@ def sentence_case(input_list):
 
 
 def leet_case(input_list):
-    &#34;&#34;&#34;Transforms every item from input list to leet case(1337). 
+    &#34;&#34;&#34;Transforms every item from the input list to leet case(1337). 
     
-    It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+    It uses a substitution dictionary to substitute a to @, s to $, etc.
     example: [&#34;riCk&#34;, &#34;moRty&#34;, &#34;42&#34;] Transforms to [&#34;r1Ck&#34;, &#34;m0Rty&#34;, &#34;moR7y&#34;, &#34;m0R7y&#34;]
 
     :param input_list: wordlist provided by the user
@@ -234,16 +235,16 @@ def leet_case(input_list):
 
 
 def toggle_case(input_list, index):
-    &#34;&#34;&#34;Transforms every item from input to toggle case with specified index. 
+    &#34;&#34;&#34;Transforms every item from input to toggle case with the specified  index. 
     
-    in toggle case each word begins in lower case and the rest in upper case. 
+    in toggle case, each word begins in lower case and the rest in upper case. 
     example: toggle_case(input_list = [&#34;rick&#34;], index=0) returns [&#34;rICK&#34;]
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :param index: index of string which Transforms to lower case
+    :param index: index of string which Transforms to lowercase
     :type index: int
-    :returns: a list of toggle case version of input items
+    :returns: a list of toggle case versions of input items
     :rtype: list
     &#34;&#34;&#34;
     output_list = []
@@ -256,7 +257,7 @@ def toggle_case(input_list, index):
                 tmpstr += item[index + 1 :].upper()
 
                 output_list.append(tmpstr)
-            except:
+            except IndexError:
                 pass
     return output_list
 
@@ -266,7 +267,7 @@ def upper_case(input_list):
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of upper case version of input items
+    :returns: a list of upper case versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.upper() for item in input_list]
@@ -279,7 +280,7 @@ def write_to_file(wordlist, semaphore, file_path):
     :type wordlist: list
     :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
     :type semaphore: multiprocessing.synchronize.Semaphore
-    :param file_path: location of output file
+    :param file_path: location of the output file
     :type file_path: str
     :returns: None
     :rtype: None
@@ -301,7 +302,7 @@ def printProgressBar(
     fill=&#34;█&#34;,
     printEnd=&#34;\r&#34;,
 ):
-    &#34;&#34;&#34;Call in a loop to create terminal progress bar.
+    &#34;&#34;&#34;Call in a loop to create a terminal progress bar.
     :param iteration: current iteration (Required)
     :type iteration: int
     :param total: total iterations (Required)
@@ -341,21 +342,21 @@ def printProgressBar(
 <span>def <span class="ident">alternating_case</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.</p>
+<div class="desc"><p>Transform every item from the input list to alternating case. In this form text alternates between lowercase and upper case.</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
-:returns: a list of alternating version of input items
+:returns: a list of alternating versions of input items
 :rtype: list</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def alternating_case(input_list):
-    &#34;&#34;&#34;Transform every item from input list to alternating case. In this form text alternates between lowercase and upper case.
+    &#34;&#34;&#34;Transform every item from the input list to alternating case. In this form text alternates between lowercase and upper case.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of alternating version of input items
+    :returns: a list of alternating versions of input items
     :rtype: list
     &#34;&#34;&#34;
     alternating_list = []
@@ -376,21 +377,21 @@ def printProgressBar(
 <span>def <span class="ident">capitalize</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Capitalize case of every item from input list.</p>
+<div class="desc"><p>Capitalize the case of every item from the input list.</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
-:returns: a list of capitalized version of input items
+:returns: a list of capitalized versions of input items
 :rtype: list</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def capitalize(input_list):
-    &#34;&#34;&#34;Capitalize case of every item from input list.
+    &#34;&#34;&#34;Capitalize the case of every item from the input list.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of capitalized version of input items
+    :returns: a list of capitalized versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.capitalize() for item in input_list]</code></pre>
@@ -400,8 +401,8 @@ def printProgressBar(
 <span>def <span class="ident">leet_case</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transforms every item from input list to leet case(1337). </p>
-<p>It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+<div class="desc"><p>Transforms every item from the input list to leet case(1337). </p>
+<p>It uses a substitution dictionary to substitute a to @, s to $, etc.
 example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y"]</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
@@ -412,9 +413,9 @@ example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def leet_case(input_list):
-    &#34;&#34;&#34;Transforms every item from input list to leet case(1337). 
+    &#34;&#34;&#34;Transforms every item from the input list to leet case(1337). 
     
-    It uses substitutions dictionary to subtitute a to @, s to $ and etc.
+    It uses a substitution dictionary to substitute a to @, s to $, etc.
     example: [&#34;riCk&#34;, &#34;moRty&#34;, &#34;42&#34;] Transforms to [&#34;r1Ck&#34;, &#34;m0Rty&#34;, &#34;moR7y&#34;, &#34;m0R7y&#34;]
 
     :param input_list: wordlist provided by the user
@@ -441,21 +442,21 @@ example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y
 <span>def <span class="ident">lower_case</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transforms every item from input list to lower case.</p>
+<div class="desc"><p>Transforms every item from the input list to lowercase.</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
-:returns: a list of lower case version of input items
+:returns: a list of lowercase versions of input items
 :rtype: list</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def lower_case(input_list):
-    &#34;&#34;&#34;Transforms every item from input list to lower case.
+    &#34;&#34;&#34;Transforms every item from the input list to lowercase.
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of lower case version of input items
+    :returns: a list of lowercase versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.lower() for item in input_list]</code></pre>
@@ -465,7 +466,7 @@ example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y
 <span>def <span class="ident">printProgressBar</span></span>(<span>iteration, total, prefix='Progress:', suffix='Completed', decimals=1, length=100, fill='█', printEnd='\r')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Call in a loop to create terminal progress bar.
+<div class="desc"><p>Call in a loop to create a terminal progress bar.
 :param iteration: current iteration (Required)
 :type iteration: int
 :param total: total iterations (Required)
@@ -500,7 +501,7 @@ example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y
     fill=&#34;█&#34;,
     printEnd=&#34;\r&#34;,
 ):
-    &#34;&#34;&#34;Call in a loop to create terminal progress bar.
+    &#34;&#34;&#34;Call in a loop to create a terminal progress bar.
     :param iteration: current iteration (Required)
     :type iteration: int
     :param total: total iterations (Required)
@@ -559,21 +560,21 @@ example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y
 <span>def <span class="ident">reverse</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reverse every item from input.</p>
+<div class="desc"><p>Reverse every item from the input.</p>
 <p>:param input_word: list provided by the user
 :type input_word: str
-:returns: reverse version of input word
+:returns: reverse versions of input word
 :rtype: str</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(input_list):
-    &#34;&#34;&#34;Reverse every item from input.
+    &#34;&#34;&#34;Reverse every item from the input.
 
     :param input_word: list provided by the user
     :type input_word: str
-    :returns: reverse version of input word
+    :returns: reverse versions of input word
     :rtype: str
     &#34;&#34;&#34;
     return [item[::-1] for item in input_list]</code></pre>
@@ -583,9 +584,9 @@ example: ["riCk", "moRty", "42"] Transforms to ["r1Ck", "m0Rty", "moR7y", "m0R7y
 <span>def <span class="ident">sentence_case</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transform every item from input list to sentence case.</p>
-<p>It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
-example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisalsoatext']</p>
+<div class="desc"><p>Transform every item from the input list to sentence case.</p>
+<p>It works by capitalizing the very first letter in each sentence and then transforming the rest of the text
+into lowercase. example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisalsoatext']</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
 :returns: a list of input items in sentence case version
@@ -595,10 +596,10 @@ example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisa
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sentence_case(input_list):
-    &#34;&#34;&#34;Transform every item from input list to sentence case.
+    &#34;&#34;&#34;Transform every item from the input list to sentence case.
     
-    It works by capitalizing the very first letter in each sentence and then transform the rest of text in lowercase.
-    example: [&#34;thisistext&#34;, &#34;tHisIsALSOateXt&#34;] Transforms to [&#39;Thisistext&#39;, &#39;Thisisalsoatext&#39;]
+    It works by capitalizing the very first letter in each sentence and then transforming the rest of the text
+    into lowercase. example: [&#34;thisistext&#34;, &#34;tHisIsALSOateXt&#34;] Transforms to [&#39;Thisistext&#39;, &#39;Thisisalsoatext&#39;]
 
     :param input_list: wordlist provided by the user
     :type input_list: list
@@ -618,21 +619,21 @@ example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisa
 <span>def <span class="ident">swap_case</span></span>(<span>input_list)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transforms every item from input list to swap case (upper to lower and vice versa).</p>
+<div class="desc"><p>Transforms every item from the input list to swap case (upper to lower and vice versa).</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
-:returns: a list of swap case version of input items
+:returns: a list of swap case versions of input items
 :rtype: list</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def swap_case(input_list):
-    &#34;&#34;&#34;Transforms every item from input list to swap case (upper to lower and vice versa).
+    &#34;&#34;&#34;Transforms every item from the input list to swap case (upper to lower and vice versa).
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of swap case version of input items
+    :returns: a list of swap case versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.swapcase() for item in input_list]</code></pre>
@@ -642,30 +643,31 @@ example: ["thisistext", "tHisIsALSOateXt"] Transforms to ['Thisistext', 'Thisisa
 <span>def <span class="ident">toggle_case</span></span>(<span>input_list, index)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Transforms every item from input to toggle case with specified index. </p>
-<p>in toggle case each word begins in lower case and the rest in upper case.
+<div class="desc"><p>Transforms every item from input to toggle case with the specified
+index. </p>
+<p>in toggle case, each word begins in lower case and the rest in upper case.
 example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
-:param index: index of string which Transforms to lower case
+:param index: index of string which Transforms to lowercase
 :type index: int
-:returns: a list of toggle case version of input items
+:returns: a list of toggle case versions of input items
 :rtype: list</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def toggle_case(input_list, index):
-    &#34;&#34;&#34;Transforms every item from input to toggle case with specified index. 
+    &#34;&#34;&#34;Transforms every item from input to toggle case with the specified  index. 
     
-    in toggle case each word begins in lower case and the rest in upper case. 
+    in toggle case, each word begins in lower case and the rest in upper case. 
     example: toggle_case(input_list = [&#34;rick&#34;], index=0) returns [&#34;rICK&#34;]
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :param index: index of string which Transforms to lower case
+    :param index: index of string which Transforms to lowercase
     :type index: int
-    :returns: a list of toggle case version of input items
+    :returns: a list of toggle case versions of input items
     :rtype: list
     &#34;&#34;&#34;
     output_list = []
@@ -678,7 +680,7 @@ example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
                 tmpstr += item[index + 1 :].upper()
 
                 output_list.append(tmpstr)
-            except:
+            except IndexError:
                 pass
     return output_list</code></pre>
 </details>
@@ -690,7 +692,7 @@ example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
 <div class="desc"><p>Transforms every item from input to upper case.</p>
 <p>:param input_list: wordlist provided by the user
 :type input_list: list
-:returns: a list of upper case version of input items
+:returns: a list of upper case versions of input items
 :rtype: list</p></div>
 <details class="source">
 <summary>
@@ -701,7 +703,7 @@ example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
 
     :param input_list: wordlist provided by the user
     :type input_list: list
-    :returns: a list of upper case version of input items
+    :returns: a list of upper case versions of input items
     :rtype: list
     &#34;&#34;&#34;
     return [item.upper() for item in input_list]</code></pre>
@@ -716,7 +718,7 @@ example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
 :type wordlist: list
 :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
 :type semaphore: multiprocessing.synchronize.Semaphore
-:param file_path: location of output file
+:param file_path: location of the output file
 :type file_path: str
 :returns: None
 :rtype: None</p></div>
@@ -731,7 +733,7 @@ example: toggle_case(input_list = ["rick"], index=0) returns ["rICK"]</p>
     :type wordlist: list
     :param semaphore: semaphore for prevent of mutual exclusion (default is 1)
     :type semaphore: multiprocessing.synchronize.Semaphore
-    :param file_path: location of output file
+    :param file_path: location of the output file
     :type file_path: str
     :returns: None
     :rtype: None
