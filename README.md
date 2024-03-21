@@ -66,37 +66,51 @@ python drowtsil.py -h
 provide the input words in the command line and apply all functions of level 0:
 ```
 -i "constant_word_1" "constant_word_2" -l 0 -all
+```
+```
 -i "constant_word_1" "constant_word_2" -l 0 -u -lo -c -lt -t 1 -s -st -rv -a
 ```
 provide the input words in the from of text files and apply all functions of level 0:
 ```
 -f "./input.txt" -l 0 -all
+```
+```
 -f "./input.txt" -l 0 -u -lo -c -lt -t 1 -s -st -rv -a
 ```
 provide the input words (constants and temporary words) and add consecutive numbers(with limit10) at the end in level 1:
 ```
 -f "./input.txt" -ft "./tmp.txt" -l 1 -n 10
+```
+```
 -i "constant_word_1" "constant_word_2" -ti "temporary_word_1" "temporary_word_2" -l 1 --numbers
 ```
 provide the input words (constants words) and add consecutive characters(a-z) and temporary words at the end in level 1:
 ```
 -f "./input.txt" -ft "./tmp.txt" -l 1 -ch
+```
+```
 -i "constant_word_1" "constant_word_2" -ti "temporary_word_1" "temporary_word_2" -l 1 --chars
 ```
 provide the input words and get permutations of them in level 2:
 ```
 -f "./input.txt" -ft "./tmp.txt" -l 2
+```
 provide the input words and define output file directory in level 2:
+```
 -f "./input.txt" -ft "./tmp.txt" -o "./output.txt" -l 2
 ```
 level 3 applies permutation and all functions on input words:
 ```
 -f "./input.txt" -ft "./tmp.txt" -l 3 -all
+```
+```
 -f "./input.txt" -ft "./tmp.txt" -l 3 -u -c -lt -t 0 -st -a
 ```
 Get permutations of reverse words:
 ```
 -f "./input.txt" -o "./reversed_output.txt" -l 0 -rv
+```
+```
 -f "./reversed_output.txt" -l 3 -all
 ```
 
